@@ -1,170 +1,257 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fin Edge EMI Calculator</title>
-<script src="https://cdn.tailwindcss.com"></script>
-
-<style>
-/* ✅ Range styling */
-input[type=range] {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 6px;
-  border-radius: 5px;
-  outline: none;
-  background: linear-gradient(to right, #10B981 0%, #10B981 0%, #e5e7eb 0%, #e5e7eb 100%);
-  transition: background 0.2s ease;
-}
-input[type=range]:hover { opacity: 0.9; }
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 20px; height: 20px; border-radius: 50%;
-  background: #10B981; border: 2px solid white; cursor: pointer;
-  box-shadow: 0 0 4px rgba(0,0,0,0.3);
-}
-input[type=range]::-moz-range-thumb {
-  width: 20px; height: 20px; border-radius: 50%;
-  background: #10B981; border: 2px solid white; cursor: pointer;
-  box-shadow: 0 0 4px rgba(0,0,0,0.3);
-}
-
-/* ✅ Make page responsive and centered */
-body {
-  background-color: #f9fafb;
-  margin: 0;
-  padding: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
-
-/* ✅ Keep container responsive for mobile & desktop */
-.container {
-  max-width: 600px;
-  width: 100%;
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-  padding: 2rem;
-}
-
-/* ✅ Ensure pie chart scales properly and not cut */
-.pie-wrapper {
-  position: relative;
-  width: 220px;
-  height: 220px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.pie-wrapper svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinEdge EMI & Mortgage Calculator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 5px;
+      outline: none;
+      background: linear-gradient(to right, #10B981 0%, #10B981 0%, #e5e7eb 0%, #e5e7eb 100%);
+      transition: background 0.2s ease;
+    }
+    input[type=range]:hover { opacity: 0.9; }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #10B981; border: 2px solid white; cursor: pointer;
+      box-shadow: 0 0 4px rgba(0,0,0,0.3);
+    }
+    body {
+      background-color: #f9fafb;
+      margin: 0;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 650px;
+      width: 100%;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      padding: 2rem;
+    }
+    .pie-wrapper {
+      position: relative;
+      width: 240px;
+      height: 240px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pie-wrapper svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+  </style>
 </head>
 
 <body>
-
-<div class="container">
-  <div class="flex items-center mb-6">
-    <div class="w-10 h-10 rounded-md bg-emerald-500 flex items-center justify-center shadow-sm">
-      <span class="text-white text-xl font-bold">₹</span>
+  <div class="container">
+    <!-- Header -->
+    <div class="flex items-center mb-6">
+      <div class="w-10 h-10 rounded-md bg-emerald-500 flex items-center justify-center shadow-sm">
+        <span class="text-white text-xl font-bold">$</span>
+      </div>
+      <div class="ml-3">
+        <h1 class="text-2xl font-bold text-emerald-600 tracking-tight">FinEdge</h1>
+      </div>
     </div>
-    <div class="ml-3">
-      <h1 class="text-2xl font-bold text-emerald-600 tracking-tight">Fin Edge</h1>
+
+    <h2 class="text-xl font-semibold text-gray-800 mb-6">Mortgage Calculator</h2>
+
+    <!-- Inputs -->
+    <div class="space-y-8">
+      <div>
+        <label class="text-sm font-medium text-gray-700">Home Value ($)</label>
+        <input id="homeValue" type="number" min="50000" max="2000000" step="10000" value="500000"
+          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
+        <input id="homeValueSlider" type="range" min="50000" max="2000000" step="10000" value="500000" class="mt-3 slider">
+        <div class="flex justify-between text-xs text-gray-500 mt-1">
+          <span>$50K</span><span>$2M</span>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-700">Down Payment ($)</label>
+        <input id="downPayment" type="number" min="0" max="2000000" step="10000" value="100000"
+          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
+        <input id="downPaymentSlider" type="range" min="0" max="2000000" step="10000" value="100000" class="mt-3 slider">
+        <div class="flex justify-between text-xs text-gray-500 mt-1">
+          <span>$0</span><span>$2M</span>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-700">Loan Amount ($)</label>
+        <input id="loanAmount" type="number" readonly
+          class="block w-full bg-gray-100 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
+      </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-700">Interest Rate (%)</label>
+        <input id="rate" type="number" min="1" max="20" step="0.1" value="7"
+          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
+        <input id="rateSlider" type="range" min="1" max="20" step="0.1" value="7" class="mt-3 slider">
+        <div class="flex justify-between text-xs text-gray-500 mt-1">
+          <span>1%</span><span>20%</span>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-700">Loan Term (Years)</label>
+        <input id="years" type="number" min="1" max="40" step="1" value="20"
+          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
+        <input id="yearsSlider" type="range" min="1" max="40" step="1" value="20" class="mt-3 slider">
+        <div class="flex justify-between text-xs text-gray-500 mt-1">
+          <span>1 Year</span><span>40 Years</span>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-700">Property Tax ($/year)</label>
+        <input id="propertyTax" type="number" min="0" max="100000" step="1000" value="5000"
+          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
+      </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-700">PMI (%)</label>
+        <input id="pmi" type="number" min="0" max="5" step="0.1" value="0.5"
+          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
+      </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-700">Home Insurance ($/year)</label>
+        <input id="insurance" type="number" min="0" max="100000" step="1000" value="2500"
+          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
+      </div>
+    </div>
+
+    <!-- Output -->
+    <div class="mt-10 text-center">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4">Mortgage Breakdown</h3>
+      <div class="flex flex-col items-center justify-center pie-wrapper">
+        <svg id="pieChart" viewBox="0 0 36 36" class="transform -rotate-90">
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#E5E7EB" stroke-width="6"></circle>
+          <circle id="principalArc" cx="18" cy="18" r="15.915" fill="none" stroke="#A7F3D0" stroke-width="6"
+            stroke-dasharray="0 100" stroke-linecap="round"></circle>
+          <circle id="interestArc" cx="18" cy="18" r="15.915" fill="none" stroke="#047857" stroke-width="6"
+            stroke-dasharray="0 100" stroke-linecap="round"></circle>
+        </svg>
+      </div>
+
+      <div class="flex justify-center gap-4 mt-3 text-sm">
+        <span class="flex items-center"><span class="w-3 h-3 bg-emerald-300 rounded-full mr-1"></span> Principal</span>
+        <span class="flex items-center"><span class="w-3 h-3 bg-emerald-800 rounded-full mr-1"></span> Interest</span>
+      </div>
+
+      <div class="mt-4 text-sm text-gray-700">
+        <table class="w-full text-left border mt-4">
+          <thead class="bg-emerald-50">
+            <tr>
+              <th class="px-4 py-2 font-medium">Component</th>
+              <th class="px-4 py-2 font-medium text-right">Amount ($)</th>
+            </tr>
+          </thead>
+          <tbody id="breakdownTable" class="text-gray-700"></tbody>
+        </table>
+      </div>
+
+      <p id="monthlyPayment" class="mt-4 text-base font-semibold text-emerald-700"></p>
+      <p class="mt-2 text-sm text-gray-600 font-medium">
+        Note: Calculations are based on monthly compounding for more accurate projections.
+      </p>
     </div>
   </div>
 
-  <h2 class="text-xl font-semibold text-gray-800 mb-6">EMI Calculator</h2>
+  <script>
+    function formatUSD(v){
+      if(v >= 1000000) return "$" + (v/1000000).toFixed(2) + "M";
+      if(v >= 1000) return "$" + (v/1000).toFixed(1) + "K";
+      return "$" + v.toLocaleString();
+    }
+    function updateSliderFill(slider){
+      const min=slider.min||0,max=slider.max||100,value=slider.value;
+      const pct=((value-min)*100)/(max-min);
+      slider.style.background=`linear-gradient(to right,#10B981 0%,#10B981 ${pct}%,#e5e7eb ${pct}%,#e5e7eb 100%)`;
+    }
 
-  <!-- Inputs -->
-  <div class="space-y-8">
-    <div>
-      <label class="text-sm font-medium text-gray-700">Loan Amount</label>
-      <input id="loan" type="number" min="10000" max="50000000" step="1000" value="1000000"
-        class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
-      <input id="loanSlider" type="range" min="10000" max="50000000" step="10000" value="1000000" class="mt-3 slider">
-      <div class="flex justify-between text-xs text-gray-500 mt-1"><span>₹10 k</span><span>₹5 Cr</span></div>
-    </div>
+    function calculateMortgage(){
+      const homeValue=parseFloat(document.getElementById('homeValue').value)||0;
+      const downPayment=parseFloat(document.getElementById('downPayment').value)||0;
+      const loanAmount=homeValue-downPayment;
+      const rate=parseFloat(document.getElementById('rate').value)||0;
+      const years=parseFloat(document.getElementById('years').value)||0;
+      const propertyTax=parseFloat(document.getElementById('propertyTax').value)||0;
+      const pmi=parseFloat(document.getElementById('pmi').value)||0;
+      const insurance=parseFloat(document.getElementById('insurance').value)||0;
 
-    <div>
-      <label class="text-sm font-medium text-gray-700">Interest Rate (annual %)</label>
-      <input id="rate" type="number" min="0" max="20" step="0.01" value="7.5"
-        class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
-      <input id="rateSlider" type="range" min="0" max="20" step="0.01" value="7.5" class="mt-3 slider">
-      <div class="flex justify-between text-xs text-gray-500 mt-1"><span>0 %</span><span>20 %</span></div>
-    </div>
+      document.getElementById('loanAmount').value = loanAmount;
 
-    <div>
-      <label class="text-sm font-medium text-gray-700">Loan Tenure (years)</label>
-      <input id="years" type="number" min="0.5" max="50" step="0.5" value="15"
-        class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
-      <input id="yearsSlider" type="range" min="0.5" max="50" step="0.5" value="15" class="mt-3 slider">
-      <div class="flex justify-between text-xs text-gray-500 mt-1"><span>0.5 y</span><span>50 y</span></div>
-    </div>
-  </div>
+      const monthlyRate=rate/100/12;
+      const n=years*12;
+      const monthlyTax=propertyTax/12;
+      const monthlyInsurance=insurance/12;
+      const monthlyPMI=(pmi/100*loanAmount)/12;
 
-  <!-- Output -->
-  <div class="mt-10 text-center">
-    <h3 class="text-lg font-semibold text-gray-700 mb-4">EMI Breakdown</h3>
-    <div class="flex flex-col items-center justify-center pie-wrapper">
-      <svg id="pieChart" viewBox="0 0 36 36" class="transform -rotate-90">
-        <circle cx="18" cy="18" r="15.915" fill="none" stroke="#E5E7EB" stroke-width="6"></circle>
-        <circle id="principalArc" cx="18" cy="18" r="15.915" fill="none" stroke="#A7F3D0" stroke-width="6"
-          stroke-dasharray="0 100" stroke-linecap="round"></circle>
-        <circle id="interestArc" cx="18" cy="18" r="15.915" fill="none" stroke="#047857" stroke-width="6"
-          stroke-dasharray="0 100" stroke-dashoffset="0" stroke-linecap="round"></circle>
-      </svg>
-    </div>
-    <div class="mt-4 space-y-2 text-sm text-gray-700">
-      <p><span class="inline-block w-3 h-3 bg-emerald-200 rounded-full mr-2"></span>Principal: <span id="principalText">₹0</span></p>
-      <p><span class="inline-block w-3 h-3 bg-emerald-700 rounded-full mr-2"></span>Interest: <span id="interestText">₹0</span></p>
-    </div>
-    <p class="font-semibold text-gray-900 text-lg mt-4">Monthly EMI: <span id="emiValue">₹0</span></p>
-  </div>
-</div>
+      const monthlyPrincipalInterest=(loanAmount*monthlyRate)/(1-Math.pow(1+monthlyRate,-n));
+      const totalPayment=(monthlyPrincipalInterest+monthlyTax+monthlyInsurance+monthlyPMI)*n;
+      const totalInterest=monthlyPrincipalInterest*n-loanAmount;
+      const totalPrincipal=loanAmount;
+      const totalTax=monthlyTax*n;
+      const totalInsurance=monthlyInsurance*n;
+      const totalPMI=monthlyPMI*n;
 
-<script>
-function formatINR(v){return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(v);}
-function updateSliderFill(slider){
-  const min=slider.min||0,max=slider.max||100,value=slider.value;
-  const pct=((value-min)*100)/(max-min);
-  slider.style.background=`linear-gradient(to right,#10B981 0%,#10B981 ${pct}%,#e5e7eb ${pct}%,#e5e7eb 100%)`;
-}
-function calculateEMI(){
-  const P=parseFloat(document.getElementById('loan').value)||0;
-  const rA=parseFloat(document.getElementById('rate').value)||0;
-  const yrs=parseFloat(document.getElementById('years').value)||0;
-  const r=rA/12/100,n=yrs*12;
-  let emi=0,total=0,intst=0;
-  if(P>0&&r>0&&n>0){
-    const x=Math.pow(1+r,n);
-    emi=(P*r*x)/(x-1);total=emi*n;intst=total-P;
-  }
-  document.getElementById('emiValue').innerText=formatINR(emi.toFixed(0));
-  document.getElementById('principalText').innerText=formatINR(P.toFixed(0));
-  document.getElementById('interestText').innerText=formatINR(intst.toFixed(0));
-  const totalSum=P+intst,pPct=(P/totalSum)*100,iPct=(intst/totalSum)*100;
-  document.getElementById('principalArc').setAttribute('stroke-dasharray',pPct+' '+(100-pPct));
-  document.getElementById('interestArc').setAttribute('stroke-dasharray',iPct+' '+(100-iPct));
-  document.getElementById('interestArc').setAttribute('stroke-dashoffset',-pPct);
-}
-['loan','rate','years'].forEach(id=>{
-  const input=document.getElementById(id),slider=document.getElementById(id+'Slider');
-  const updateAll=()=>{slider.value=input.value;updateSliderFill(slider);calculateEMI();};
-  input.addEventListener('input',updateAll);
-  slider.addEventListener('input',()=>{input.value=slider.value;updateSliderFill(slider);calculateEMI();});
-  updateSliderFill(slider);
-});
-calculateEMI();
-</script>
+      const totalAll=totalPrincipal+totalInterest+totalTax+totalInsurance+totalPMI;
 
+      const breakdown=[
+        ["Principal", totalPrincipal],
+        ["Interest", totalInterest],
+        ["Property Tax", totalTax],
+        ["PMI", totalPMI],
+        ["Home Insurance", totalInsurance],
+        ["Total Payment", totalAll]
+      ];
+
+      let html="";
+      breakdown.forEach(([label, val])=>{
+        html+=`<tr><td class='px-4 py-2 border'>${label}</td><td class='px-4 py-2 border text-right font-semibold'>${formatUSD(val)}</td></tr>`;
+      });
+      document.getElementById('breakdownTable').innerHTML=html;
+
+      const pPct=(totalPrincipal/totalAll)*100;
+      const iPct=(totalInterest/totalAll)*100;
+      document.getElementById('principalArc').setAttribute('stroke-dasharray',pPct+' '+(100-pPct));
+      document.getElementById('interestArc').setAttribute('stroke-dasharray',iPct+' '+(100-iPct));
+      document.getElementById('interestArc').setAttribute('stroke-dashoffset',-pPct);
+
+      document.getElementById('monthlyPayment').innerText = 
+        "Estimated Monthly Payment: " + formatUSD(monthlyPrincipalInterest + monthlyTax + monthlyInsurance + monthlyPMI);
+    }
+
+    ['homeValue','downPayment','rate','years'].forEach(id=>{
+      const input=document.getElementById(id);
+      const slider=document.getElementById(id+'Slider');
+      const updateAll=()=>{slider.value=input.value;updateSliderFill(slider);calculateMortgage();};
+      input.addEventListener('input',updateAll);
+      slider.addEventListener('input',()=>{input.value=slider.value;updateSliderFill(slider);calculateMortgage();});
+      updateSliderFill(slider);
+    });
+
+    ['propertyTax','pmi','insurance'].forEach(id=>{
+      document.getElementById(id).addEventListener('input',calculateMortgage);
+    });
+
+    calculateMortgage();
+  </script>
 </body>
 </html>
-
