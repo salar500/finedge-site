@@ -1,60 +1,27 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Privacy Policy - FinEdge</title>
+  <title>Privacy Policy – FinEdge</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 text-gray-800">
-  <div class="max-w-3xl mx-auto px-6 py-10">
-
-    <!-- Header -->
-    <div class="flex items-center mb-8">
-      <div class="w-10 h-10 rounded-md bg-emerald-500 flex items-center justify-center shadow-sm">
-        <span class="text-white text-xl font-bold">$</span>
-      </div>
-      <h1 class="ml-3 text-2xl font-bold text-emerald-600 tracking-tight">Fin Edge</h1>
-    </div>
-
-    <!-- Content -->
-    <h2 class="text-xl font-semibold mb-4">Privacy Policy</h2>
-    <p class="leading-relaxed mb-4">
-      At <strong>Fin Edge</strong>, your privacy is our priority. We do not collect,
-      store, or share any personal data from our users. All calculations are processed
-      directly in your browser for your convenience and safety.
-    </p>
-    <p class="leading-relaxed mb-4">
-      Our website may use cookies or third-party analytics tools (like Google Analytics)
-      in the future to improve user experience. However, no personally identifiable
-      information will ever be sold, rented, or disclosed to others.
-    </p>
-    <p class="leading-relaxed mb-4">
-      By using our site, you agree to this privacy policy. Any future updates will be
-      reflected on this page. We recommend reviewing this section periodically.
-    </p>
-
-    <p class="text-sm text-gray-500 mt-10">
-      &copy; 2025 Fin Edge. All rights reserved.
-    </p>
+  <div class="max-w-3xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-emerald-600 mb-4">Privacy Policy</h1>
+    <p class="mb-4">FinEdge respects your privacy. We do not collect, store, or share personal information from our calculators or tools.</p>
+    <p class="mb-4">All calculations are performed directly in your browser. No data is transmitted to our servers.</p>
+    <p>If you contact us or provide feedback, your information will be used solely to respond to your message and will never be sold or shared.</p>
+    <p class="mt-4">Last updated: November 2025</p>
   </div>
 
- <!-- placeholder where footer will be injected -->
-<div id="site-footer"></div>
-
-<script>
-  (function(){
-    const url = '/footer.html'; // path to the single footer file
-    fetch(url).then(resp => {
-      if(!resp.ok) throw new Error('No footer file found');
-      return resp.text();
-    }).then(html => {
-      document.getElementById('site-footer').innerHTML = html;
-    }).catch(e => {
-      console.warn('Footer load failed:', e);
-    });
-  })();
-</script>
-  
+  <!-- Footer -->
+  <div id="site-footer"></div>
+  <script>
+    (function(){
+      const url = '/footer.html';
+      fetch(url).then(r=>r.text()).then(h=>document.getElementById('site-footer').innerHTML=h);
+    })();
+  </script>
 </body>
 </html>
