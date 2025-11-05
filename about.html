@@ -3,57 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About Us - FinEdge</title>
+  <title>About – FinEdge</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 text-gray-800">
-  <div class="max-w-3xl mx-auto px-6 py-10">
-    
-    <!-- Header -->
-    <div class="flex items-center mb-8">
-      <div class="w-10 h-10 rounded-md bg-emerald-500 flex items-center justify-center shadow-sm">
-        <span class="text-white text-xl font-bold">$</span>
-      </div>
-      <h1 class="ml-3 text-2xl font-bold text-emerald-600 tracking-tight">Fin Edge</h1>
-    </div>
-
-    <!-- Content -->
-    <h2 class="text-xl font-semibold mb-4">About Us</h2>
-    <p class="leading-relaxed mb-4">
-      Welcome to <strong>Fin Edge</strong> — your trusted financial calculator hub.
-      We aim to simplify complex financial decisions through interactive and accurate tools
-      like mortgage, EMI, SIP, and tax calculators.
-    </p>
-    <p class="leading-relaxed mb-4">
-      Our mission is to empower individuals with clarity on their financial choices.
-      Whether you're buying a home, planning investments, or managing loans, our calculators
-      are built to deliver fast, precise insights to guide you every step of the way.
-    </p>
-    <p class="leading-relaxed mb-4">
-      Every tool is designed for simplicity, accuracy, and transparency — helping you make
-      better financial decisions anytime, anywhere.
-    </p>
-
-    <p class="text-sm text-gray-500 mt-10">
-      &copy; 2025 Fin Edge. All rights reserved.
-    </p>
+  <div class="max-w-3xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-emerald-600 mb-4">About FinEdge</h1>
+    <p class="mb-4">FinEdge is a simple and smart financial calculator platform built to help users estimate loans, mortgages, and investments with ease.</p>
+    <p class="mb-4">Our goal is to make finance understandable for everyone — from beginners to professionals — using clear tools and reliable formulas.</p>
+    <p>We continuously add new calculators and improve accuracy so that you can plan confidently for your financial future.</p>
   </div>
-<!-- placeholder where footer will be injected -->
-<div id="site-footer"></div>
 
-<script>
-  (function(){
-    const url = '/footer.html'; // path to the single footer file
-    fetch(url).then(resp => {
-      if(!resp.ok) throw new Error('No footer file found');
-      return resp.text();
-    }).then(html => {
-      document.getElementById('site-footer').innerHTML = html;
-    }).catch(e => {
-      console.warn('Footer load failed:', e);
-    });
-  })();
-          </script>
-  
+  <!-- Footer -->
+  <div id="site-footer"></div>
+  <script>
+    (function(){
+      const url = '/footer.html';
+      fetch(url).then(r=>r.text()).then(h=>document.getElementById('site-footer').innerHTML=h);
+    })();
+  </script>
 </body>
 </html>
