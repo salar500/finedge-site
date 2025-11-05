@@ -259,7 +259,7 @@
 
 <script>
   (function(){
-    const url = '/footer.html'; // path to the single footer file
+    const url = 'footer.html'; // path to the single footer file
     fetch(url).then(resp => {
       if(!resp.ok) throw new Error('No footer file found');
       return resp.text();
