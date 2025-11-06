@@ -1,20 +1,42 @@
 <!-- header.html -->
-<header class="flex items-center justify-between bg-emerald-600 text-white px-4 py-3 shadow-md">
-  <div class="flex items-center space-x-3">
-    <!-- Menu Icon -->
-    <button id="menuBtn" class="focus:outline-none">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M4 6h16M4 12h16M4 18h16" />
+<nav class="bg-emerald-600 text-white flex items-center justify-between px-4 py-3 shadow-md fixed top-0 left-0 w-full z-50">
+  <div class="flex items-center gap-2">
+    <button id="menuBtn" class="p-2 rounded hover:bg-emerald-700">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
       </svg>
     </button>
-
-    <!-- Logo -->
-    <div class="w-8 h-8 bg-white text-emerald-600 rounded-md flex items-center justify-center font-bold text-lg shadow">
-      ₹
-    </div>
-
-    <!-- Name -->
-    <h1 class="text-xl font-semibold tracking-tight">Paisa</h1>
+    <span class="text-2xl font-bold tracking-tight flex items-center gap-1">
+      <span>₹</span> Paisa
+    </span>
   </div>
-</header>
+</nav>
+
+<script>
+  // Attach sidebar toggle listeners globally
+  document.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const menuBtn = document.getElementById('menuBtn');
+    const closeSidebar = document.getElementById('closeSidebar');
+
+    if (menuBtn && sidebar && overlay) {
+      menuBtn.addEventListener('click', () => {
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+      });
+
+      overlay.addEventListener('click', () => {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+      });
+
+      if (closeSidebar) {
+        closeSidebar.addEventListener('click', () => {
+          sidebar.classList.add('-translate-x-full');
+          overlay.classList.add('hidden');
+        });
+      }
+    }
+  });
+</script>
