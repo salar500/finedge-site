@@ -14,38 +14,18 @@
       display: flex;
       flex-direction: column;
     }
-
-    /* Sidebar animation */
-    #sidebar {
-      transition: transform 0.3s ease-in-out;
-      transform: translateX(-100%);
-    }
-    #sidebar.open {
-      transform: translateX(0);
-    }
   </style>
 </head>
 
 <body>
-  <!-- Header placeholder -->
+  <!-- Header -->
   <div id="site-header"></div>
 
   <!-- Sidebar -->
-  <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 p-4">
-    <h2 class="text-lg font-semibold text-emerald-600 mb-4">Calculators</h2>
-    <ul class="space-y-3">
-      <li><a href="emi.html" class="block px-3 py-2 rounded hover:bg-emerald-50 text-gray-800">🏠 Mortgage / EMI Calculator</a></li>
-      <li><a href="sip.html" class="block px-3 py-2 rounded hover:bg-emerald-50 text-gray-800">📈 SIP Calculator</a></li>
-      <li><a href="#" class="block px-3 py-2 rounded hover:bg-emerald-50 text-gray-400 cursor-not-allowed">💰 SWP Calculator (Coming Soon)</a></li>
-    </ul>
-    <button id="closeSidebar" class="mt-6 text-sm text-gray-500 hover:text-emerald-600">Close Menu</button>
-  </aside>
-
-  <!-- Overlay -->
-  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden"></div>
+  <div id="site-sidebar"></div>
 
   <!-- Main Content -->
-  <main class="flex-grow flex flex-col items-center justify-center text-center px-4 py-10">
+  <main class="flex-grow flex flex-col items-center justify-center text-center px-4 py-10 mt-16">
     <h1 class="text-3xl font-bold text-emerald-700 mb-4">Welcome to Paisa</h1>
     <p class="text-gray-600 max-w-md mb-8">
       Smart, simple tools to plan your financial journey. Choose a calculator below to get started.
@@ -63,30 +43,38 @@
     </div>
   </main>
 
-  <!-- Footer placeholder -->
+  <!-- Footer -->
   <div id="site-footer"></div>
 
   <script>
-    // Sidebar toggle logic
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-    const closeSidebar = document.getElementById('closeSidebar');
-
-    function toggleSidebar(show) {
-      sidebar.classList.toggle('open', show);
-      overlay.classList.toggle('hidden', !show);
-    }
-
-    document.addEventListener('click', (e) => {
-      if (e.target.id === 'menuBtn') toggleSidebar(true);
-      if (e.target.id === 'closeSidebar' || e.target.id === 'overlay') toggleSidebar(false);
-    });
-
-    // Inject header and footer
+    // Inject header, sidebar, and footer dynamically
     Promise.all([
       fetch('header.html').then(r => r.text()).then(html => document.getElementById('site-header').innerHTML = html),
+      fetch('sidebar.html').then(r => r.text()).then(html => document.getElementById('site-sidebar').innerHTML = html),
       fetch('footer.html').then(r => r.text()).then(html => document.getElementById('site-footer').innerHTML = html)
-    ]).catch(err => console.warn('Header/Footer load failed', err));
+    ])
+    .then(() => {
+      // Reattach sidebar toggle logic after elements load
+      const menuBtn = document.getElementById('menuBtn');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      const closeSidebar = document.getElementById('closeSidebar');
+
+      function openSidebar() {
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+      }
+
+      function closeSidebarFunc() {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+      }
+
+      menuBtn?.addEventListener('click', openSidebar);
+      closeSidebar?.addEventListener('click', closeSidebarFunc);
+      overlay?.addEventListener('click', closeSidebarFunc);
+    })
+    .catch(err => console.warn('Header/Sidebar/Footer load failed', err));
   </script>
 </body>
-</html>
+  </html>
