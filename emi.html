@@ -59,17 +59,11 @@
 </head>
 
 <body>
-  <div class="container">
-    <!-- Header -->
-    <div class="flex items-center mb-6">
-      <div class="w-10 h-10 rounded-md bg-emerald-500 flex items-center justify-center shadow-sm">
-        <span class="text-white text-xl font-bold">$</span>
-      </div>
-      <div class="ml-3">
-        <h1 class="text-2xl font-bold text-emerald-600 tracking-tight">Paisa</h1>
-      </div>
-    </div>
+  <!-- ✅ Header placeholder -->
+  <div id="site-header"></div>
 
+  <!-- ✅ Main Calculator -->
+  <div class="container mt-6">
     <h2 class="text-xl font-semibold text-gray-800 mb-6">Mortgage / EMI Calculator</h2>
 
     <!-- Inputs -->
@@ -176,6 +170,16 @@
     </div>
   </div>
 
+  <!-- ✅ Inject header + footer -->
+  <div id="site-footer"></div>
+  <script>
+    Promise.all([
+      fetch('header.html').then(r => r.text()).then(html => document.getElementById('site-header').innerHTML = html),
+      fetch('footer.html').then(r => r.text()).then(html => document.getElementById('site-footer').innerHTML = html)
+    ]).catch(err => console.warn('Header/Footer load failed', err));
+  </script>
+
+  <!-- ✅ Calculator Logic -->
   <script>
     function formatUSD(v){
       if(v >= 1000000) return "$" + (v/1000000).toFixed(2) + "M";
@@ -256,15 +260,5 @@
 
     calculateMortgage();
   </script>
-
-  <!-- Footer injection -->
-  <div id="site-footer"></div>
-  <script>
-    (function(){
-      fetch('footer.html').then(resp => resp.text()).then(html => {
-        document.getElementById('site-footer').innerHTML = html;
-      }).catch(e => console.warn('Footer not found:', e));
-    })();
-  </script>
 </body>
-  </html>
+        </html>
