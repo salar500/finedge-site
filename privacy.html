@@ -3,25 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Privacy Policy – FinEdge</title>
+  <title>Privacy Policy – Paisa</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #f9fafb;
+      color: #1f2937;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
-  <div class="max-w-3xl mx-auto p-6">
+<body>
+  <!-- Header -->
+  <div id="site-header"></div>
+
+  <!-- Sidebar -->
+  <div id="site-sidebar"></div>
+
+  <!-- Overlay -->
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
+
+  <!-- Main content -->
+  <main class="flex-grow max-w-3xl mx-auto p-6">
     <h1 class="text-3xl font-bold text-emerald-600 mb-4">Privacy Policy</h1>
-    <p class="mb-4">FinEdge respects your privacy. We do not collect, store, or share personal information from our calculators or tools.</p>
+    <p class="mb-4">Paisa respects your privacy. We do not collect, store, or share personal information from our calculators or tools.</p>
     <p class="mb-4">All calculations are performed directly in your browser. No data is transmitted to our servers.</p>
     <p>If you contact us or provide feedback, your information will be used solely to respond to your message and will never be sold or shared.</p>
-    <p class="mt-4">Last updated: November 2025</p>
-  </div>
+    <p class="mt-4 text-gray-600">Last updated: November 2025</p>
+  </main>
 
   <!-- Footer -->
   <div id="site-footer"></div>
+
+  <!-- Header, Sidebar, and Footer Load -->
   <script>
-    (function(){
-      const url = 'footer.html';
-      fetch(url).then(r=>r.text()).then(h=>document.getElementById('site-footer').innerHTML=h);
-    })();
+    Promise.all([
+      fetch('header.html').then(r => r.text()).then(html => document.getElementById('site-header').innerHTML = html),
+      fetch('sidebar.html').then(r => r.text()).then(html => document.getElementById('site-sidebar').innerHTML = html),
+      fetch('footer.html').then(r => r.text()).then(html => document.getElementById('site-footer').innerHTML = html)
+    ]).then(() => {
+      // Rebind sidebar logic
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      const menuBtn = document.getElementById('menuBtn');
+      const closeSidebar = document.getElementById('closeSidebar');
+
+      function toggleSidebar(show) {
+        if (!sidebar || !overlay) return;
+        sidebar.classList.toggle('open', show);
+        overlay.classList.toggle('hidden', !show);
+      }
+
+      menuBtn?.addEventListener('click', () => toggleSidebar(true));
+      closeSidebar?.addEventListener('click', () => toggleSidebar(false));
+      overlay?.addEventListener('click', () => toggleSidebar(false));
+    }).catch(err => console.warn('Header/Sidebar/Footer load failed', err));
   </script>
 </body>
 </html>
