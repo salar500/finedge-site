@@ -20,25 +20,18 @@
     const overlay = document.getElementById("overlay");
     const closeSidebar = document.getElementById("closeSidebar");
 
-    if (menuBtn) {
-      menuBtn.addEventListener("click", () => {
-        sidebar?.classList.remove("-translate-x-full");
-        overlay?.classList.remove("hidden");
-      });
+    function openSidebar() {
+      sidebar?.classList.remove("-translate-x-full");
+      overlay?.classList.remove("hidden");
     }
 
-    if (closeSidebar) {
-      closeSidebar.addEventListener("click", () => {
-        sidebar?.classList.add("-translate-x-full");
-        overlay?.classList.add("hidden");
-      });
+    function closeSidebarFunc() {
+      sidebar?.classList.add("-translate-x-full");
+      overlay?.classList.add("hidden");
     }
 
-    if (overlay) {
-      overlay.addEventListener("click", () => {
-        sidebar?.classList.add("-translate-x-full");
-        overlay?.classList.add("hidden");
-      });
-    }
+    menuBtn?.addEventListener("click", openSidebar);
+    closeSidebar?.addEventListener("click", closeSidebarFunc);
+    overlay?.addEventListener("click", closeSidebarFunc);
   });
 </script>
