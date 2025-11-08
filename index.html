@@ -24,7 +24,7 @@
   <!-- Sidebar -->
   <div id="site-sidebar"></div>
 
-  <!-- Overlay -->
+  <!-- Overlay (for sidebar) -->
   <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
 
   <!-- Main Content -->
@@ -37,11 +37,11 @@
     <div class="grid gap-6 sm:grid-cols-2 w-full max-w-2xl">
       <a href="emi.html" class="bg-white border rounded-xl p-6 hover:shadow-lg transition">
         <h3 class="text-lg font-semibold text-emerald-600 mb-2">🏠 Mortgage / EMI Calculator</h3>
-        <p class="text-gray-600 text-sm">Estimate your monthly payments and total cost of a loan.</p>
+        <p class="text-gray-600 text-sm">Estimate your monthly payments and total loan cost.</p>
       </a>
       <a href="sip.html" class="bg-white border rounded-xl p-6 hover:shadow-lg transition">
         <h3 class="text-lg font-semibold text-emerald-600 mb-2">📈 SIP Calculator</h3>
-        <p class="text-gray-600 text-sm">Plan your investments and see potential returns.</p>
+        <p class="text-gray-600 text-sm">Plan your investments and see your potential returns.</p>
       </a>
     </div>
   </main>
@@ -49,35 +49,14 @@
   <!-- Footer -->
   <div id="site-footer"></div>
 
-  <!-- Dynamic Imports -->
   <script>
+    // Load header, sidebar, and footer
     Promise.all([
-      fetch('header.html').then(r => r.text()).then(html => document.getElementById('site-header').innerHTML = html),
-      fetch('sidebar.html').then(r => r.text()).then(html => document.getElementById('site-sidebar').innerHTML = html),
-      fetch('footer.html').then(r => r.text()).then(html => document.getElementById('site-footer').innerHTML = html)
+      fetch("header.html").then(r => r.text()).then(h => document.getElementById("site-header").innerHTML = h),
+      fetch("sidebar.html").then(r => r.text()).then(h => document.getElementById("site-sidebar").innerHTML = h),
+      fetch("footer.html").then(r => r.text()).then(h => document.getElementById("site-footer").innerHTML = h)
     ])
-    .then(() => {
-      // Sidebar toggle logic (runs after header/sidebar load)
-      const menuBtn = document.getElementById('menuBtn');
-      const sidebar = document.getElementById('sidebar');
-      const overlay = document.getElementById('overlay');
-      const closeSidebar = document.getElementById('closeSidebar');
-
-      function openSidebar() {
-        sidebar.classList.remove('-translate-x-full');
-        overlay.classList.remove('hidden');
-      }
-
-      function closeSidebarFunc() {
-        sidebar.classList.add('-translate-x-full');
-        overlay.classList.add('hidden');
-      }
-
-      menuBtn?.addEventListener('click', openSidebar);
-      closeSidebar?.addEventListener('click', closeSidebarFunc);
-      overlay?.addEventListener('click', closeSidebarFunc);
-    })
-    .catch(err => console.warn('Header/Sidebar/Footer load failed', err));
+    .catch(err => console.warn("Header/Sidebar/Footer load failed", err));
   </script>
 </body>
 </html>
