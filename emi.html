@@ -124,21 +124,34 @@
       fetch('footer.html').then(r => r.text()).then(html => document.getElementById('site-footer').innerHTML = html)
     ]).then(() => {
       // Rebind menu toggle logic AFTER header/sidebar load
-      const sidebar = document.getElementById('sidebar');
-      const overlay = document.getElementById('overlay');
-      const menuBtn = document.getElementById('menuBtn');
-      const closeSidebar = document.getElementById('closeSidebar');
+      // Sidebar handling after all includes are loaded
+Promise.all([
+  fetch('header.html').then(r => r.text()).then(html => document.getElementById('site-header').innerHTML = html),
+  fetch('sidebar.html').then(r => r.text()).then(html => document.getElementById('site-sidebar').innerHTML = html),
+  fetch('footer.html').then(r => r.text()).then(html => document.getElementById('site-footer').innerHTML = html)
+]).then(() => {
+  // Wait for DOM updates
+  setTimeout(() => {
+    const sidebar = document.querySelector('#sidebar');
+    const overlay = document.querySelector('#overlay');
+    const menuBtn = document.querySelector('#menuBtn');
+    const closeSidebar = document.querySelector('#closeSidebar');
 
-      function toggleSidebar(show) {
-        if (!sidebar || !overlay) return;
-        sidebar.classList.toggle('open', show);
-        overlay.classList.toggle('hidden', !show);
-      }
+    function openSidebar() {
+      sidebar?.classList.remove('-translate-x-full');
+      overlay?.classList.remove('hidden');
+    }
+    function closeSidebarFunc() {
+      sidebar?.classList.add('-translate-x-full');
+      overlay?.classList.add('hidden');
+    }
 
-      menuBtn?.addEventListener('click', () => toggleSidebar(true));
-      closeSidebar?.addEventListener('click', () => toggleSidebar(false));
-      overlay?.addEventListener('click', () => toggleSidebar(false));
-    }).catch(err => console.warn('Header/Sidebar/Footer load failed', err));
+    menuBtn?.addEventListener('click', openSidebar);
+    closeSidebar?.addEventListener('click', closeSidebarFunc);
+    overlay?.addEventListener('click', closeSidebarFunc);
+  }, 100); // short delay to ensure HTML injection
+}).catch(err => console.warn('Header/Sidebar/Footer load failed', err));
+
   </script>
 
   <!-- Your existing calculator logic remains unchanged -->
