@@ -9,7 +9,7 @@
     </button>
 
     <!-- Logo / Title -->
-    <div class="flex items-center gap-1">
+    <div class="flex items-center gap-1 select-none">
       <span class="text-lg">💸</span>
       <span class="text-2xl font-bold tracking-tight">Paisa</span>
     </div>
@@ -17,20 +17,23 @@
 </nav>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+  // Make sure this runs safely even when included via fetch()
+  window.addEventListener("DOMContentLoaded", () => {
     const menuBtn = document.getElementById("menuBtn");
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("overlay");
     const closeSidebar = document.getElementById("closeSidebar");
 
     function openSidebar() {
-      sidebar?.classList.remove("-translate-x-full");
-      overlay?.classList.remove("hidden");
+      if (!sidebar || !overlay) return;
+      sidebar.classList.remove("-translate-x-full");
+      overlay.classList.remove("hidden");
     }
 
     function closeSidebarFunc() {
-      sidebar?.classList.add("-translate-x-full");
-      overlay?.classList.add("hidden");
+      if (!sidebar || !overlay) return;
+      sidebar.classList.add("-translate-x-full");
+      overlay.classList.add("hidden");
     }
 
     menuBtn?.addEventListener("click", openSidebar);
