@@ -1,22 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EMI Calculator – Paisa</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
+    /* ✅ Range styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 5px;
+      outline: none;
+      background: linear-gradient(to right, #10B981 0%, #10B981 0%, #e5e7eb 0%, #e5e7eb 100%);
+      transition: background 0.2s ease;
+    }
+    input[type=range]:hover { opacity: 0.9; }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #10B981; border: 2px solid white; cursor: pointer;
+      box-shadow: 0 0 4px rgba(0,0,0,0.3);
+    }
+    input[type=range]::-moz-range-thumb {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #10B981; border: 2px solid white; cursor: pointer;
+      box-shadow: 0 0 4px rgba(0,0,0,0.3);
+    }
+
+    /* ✅ Page layout */
     body {
       background-color: #f9fafb;
-      color: #1f2937;
-      min-height: 100vh;
+      margin: 0;
+      padding-top: 4.5rem; /* for fixed header */
       display: flex;
       flex-direction: column;
+      min-height: 100vh;
     }
-    input:focus {
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5);
+
+    .container {
+      max-width: 600px;
+      width: 100%;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      padding: 2rem;
+      margin: 2rem auto;
+    }
+
+    .pie-wrapper {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pie-wrapper svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
     }
   </style>
 </head>
@@ -28,55 +74,67 @@
   <!-- Sidebar -->
   <div id="site-sidebar"></div>
 
-  <!-- Overlay -->
+  <!-- Overlay (for sidebar) -->
   <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
 
-  <!-- Main Content -->
-  <main class="flex-grow mt-20 max-w-3xl mx-auto p-6 bg-white rounded-xl shadow-sm">
-    <h1 class="text-2xl font-bold text-emerald-600 mb-4 text-center">🏠 EMI Calculator</h1>
-    <p class="text-gray-600 mb-6 text-center">Calculate your monthly EMI, total interest, and total payment easily.</p>
-
-    <!-- Calculator Inputs -->
-    <div class="grid md:grid-cols-3 gap-4 mb-6">
-      <div>
-        <label class="block text-sm font-semibold mb-1">Loan Amount (₹)</label>
-        <input id="loanAmount" type="number" value="1000000" class="w-full border rounded-lg p-2" />
-      </div>
-      <div>
-        <label class="block text-sm font-semibold mb-1">Interest Rate (%)</label>
-        <input id="interestRate" type="number" step="0.1" value="8.5" class="w-full border rounded-lg p-2" />
-      </div>
-      <div>
-        <label class="block text-sm font-semibold mb-1">Loan Tenure (Years)</label>
-        <input id="loanTenure" type="number" value="20" class="w-full border rounded-lg p-2" />
-      </div>
-    </div>
-
-    <button id="calculateBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-semibold transition">
-      Calculate EMI
-    </button>
-
-    <!-- Results Section -->
-    <div id="result" class="mt-8 hidden">
-      <h2 class="text-lg font-semibold text-gray-800 mb-4">Results:</h2>
-      <div class="grid sm:grid-cols-3 gap-4 text-center mb-6">
-        <div class="bg-emerald-50 p-4 rounded-lg">
-          <p class="text-sm text-gray-600">Monthly EMI</p>
-          <p id="emiValue" class="text-lg font-bold text-emerald-700">₹0</p>
+  <!-- Calculator -->
+  <main class="flex-grow">
+    <div class="container">
+      <div class="flex items-center mb-6">
+        <div class="w-10 h-10 rounded-md bg-emerald-500 flex items-center justify-center shadow-sm">
+          <span class="text-white text-xl font-bold">₹</span>
         </div>
-        <div class="bg-emerald-50 p-4 rounded-lg">
-          <p class="text-sm text-gray-600">Total Interest</p>
-          <p id="interestValue" class="text-lg font-bold text-emerald-700">₹0</p>
-        </div>
-        <div class="bg-emerald-50 p-4 rounded-lg">
-          <p class="text-sm text-gray-600">Total Payment</p>
-          <p id="totalValue" class="text-lg font-bold text-emerald-700">₹0</p>
+        <div class="ml-3">
+          <h1 class="text-2xl font-bold text-emerald-600 tracking-tight">Paisa</h1>
         </div>
       </div>
 
-      <!-- Pie Chart -->
-      <div class="max-w-xs mx-auto">
-        <canvas id="emiChart"></canvas>
+      <h2 class="text-xl font-semibold text-gray-800 mb-6">EMI Calculator</h2>
+
+      <!-- Inputs -->
+      <div class="space-y-8">
+        <div>
+          <label class="text-sm font-medium text-gray-700">Loan Amount</label>
+          <input id="loan" type="number" min="10000" max="50000000" step="1000" value="1000000"
+            class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
+          <input id="loanSlider" type="range" min="10000" max="50000000" step="10000" value="1000000" class="mt-3 slider">
+          <div class="flex justify-between text-xs text-gray-500 mt-1"><span>₹10 k</span><span>₹5 Cr</span></div>
+        </div>
+
+        <div>
+          <label class="text-sm font-medium text-gray-700">Interest Rate (annual %)</label>
+          <input id="rate" type="number" min="0" max="20" step="0.01" value="7.5"
+            class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
+          <input id="rateSlider" type="range" min="0" max="20" step="0.01" value="7.5" class="mt-3 slider">
+          <div class="flex justify-between text-xs text-gray-500 mt-1"><span>0 %</span><span>20 %</span></div>
+        </div>
+
+        <div>
+          <label class="text-sm font-medium text-gray-700">Loan Tenure (years)</label>
+          <input id="years" type="number" min="0.5" max="50" step="0.5" value="15"
+            class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
+          <input id="yearsSlider" type="range" min="0.5" max="50" step="0.5" value="15" class="mt-3 slider">
+          <div class="flex justify-between text-xs text-gray-500 mt-1"><span>0.5 y</span><span>50 y</span></div>
+        </div>
+      </div>
+
+      <!-- Output -->
+      <div class="mt-10 text-center">
+        <h3 class="text-lg font-semibold text-gray-700 mb-4">EMI Breakdown</h3>
+        <div class="flex flex-col items-center justify-center pie-wrapper">
+          <svg id="pieChart" viewBox="0 0 36 36" class="transform -rotate-90">
+            <circle cx="18" cy="18" r="15.915" fill="none" stroke="#E5E7EB" stroke-width="6"></circle>
+            <circle id="principalArc" cx="18" cy="18" r="15.915" fill="none" stroke="#A7F3D0" stroke-width="6"
+              stroke-dasharray="0 100" stroke-linecap="round"></circle>
+            <circle id="interestArc" cx="18" cy="18" r="15.915" fill="none" stroke="#047857" stroke-width="6"
+              stroke-dasharray="0 100" stroke-dashoffset="0" stroke-linecap="round"></circle>
+          </svg>
+        </div>
+        <div class="mt-4 space-y-2 text-sm text-gray-700">
+          <p><span class="inline-block w-3 h-3 bg-emerald-200 rounded-full mr-2"></span>Principal: <span id="principalText">₹0</span></p>
+          <p><span class="inline-block w-3 h-3 bg-emerald-700 rounded-full mr-2"></span>Interest: <span id="interestText">₹0</span></p>
+        </div>
+        <p class="font-semibold text-gray-900 text-lg mt-4">Monthly EMI: <span id="emiValue">₹0</span></p>
       </div>
     </div>
   </main>
@@ -84,26 +142,28 @@
   <!-- Footer -->
   <div id="site-footer"></div>
 
-  <!-- Script: Load Header, Sidebar, Footer -->
   <script>
+    // Load header, sidebar, and footer
     Promise.all([
-      fetch('header.html').then(r => r.text()).then(html => document.getElementById('site-header').innerHTML = html),
-      fetch('sidebar.html').then(r => r.text()).then(html => document.getElementById('site-sidebar').innerHTML = html),
-      fetch('footer.html').then(r => r.text()).then(html => document.getElementById('site-footer').innerHTML = html)
+      fetch("header.html").then(r => r.text()).then(h => document.getElementById("site-header").innerHTML = h),
+      fetch("sidebar.html").then(r => r.text()).then(h => document.getElementById("site-sidebar").innerHTML = h),
+      fetch("footer.html").then(r => r.text()).then(h => document.getElementById("site-footer").innerHTML = h)
     ])
     .then(() => {
+      // Sidebar open/close logic
       const sidebar = document.getElementById("sidebar");
       const overlay = document.getElementById("overlay");
       const menuBtn = document.getElementById("menuBtn");
       const closeSidebar = document.getElementById("closeSidebar");
 
       function openSidebar() {
-        sidebar.classList.remove("-translate-x-full");
-        overlay.classList.remove("hidden");
+        sidebar?.classList.remove("-translate-x-full");
+        overlay?.classList.remove("hidden");
       }
+
       function closeSidebarFunc() {
-        sidebar.classList.add("-translate-x-full");
-        overlay.classList.add("hidden");
+        sidebar?.classList.add("-translate-x-full");
+        overlay?.classList.add("hidden");
       }
 
       menuBtn?.addEventListener("click", openSidebar);
@@ -111,46 +171,40 @@
       overlay?.addEventListener("click", closeSidebarFunc);
     })
     .catch(err => console.warn("Header/Sidebar/Footer load failed", err));
-  </script>
 
-  <!-- EMI Calculation Script -->
-  <script>
-    document.getElementById("calculateBtn").addEventListener("click", function () {
-      const P = parseFloat(document.getElementById("loanAmount").value);
-      const R = parseFloat(document.getElementById("interestRate").value) / 12 / 100;
-      const N = parseFloat(document.getElementById("loanTenure").value) * 12;
-
-      if (!P || !R || !N) {
-        alert("Please enter valid inputs!");
-        return;
+    // ---- EMI CALCULATOR SCRIPT ----
+    function formatINR(v){return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(v);}
+    function updateSliderFill(slider){
+      const min=slider.min||0,max=slider.max||100,value=slider.value;
+      const pct=((value-min)*100)/(max-min);
+      slider.style.background=`linear-gradient(to right,#10B981 0%,#10B981 ${pct}%,#e5e7eb ${pct}%,#e5e7eb 100%)`;
+    }
+    function calculateEMI(){
+      const P=parseFloat(document.getElementById('loan').value)||0;
+      const rA=parseFloat(document.getElementById('rate').value)||0;
+      const yrs=parseFloat(document.getElementById('years').value)||0;
+      const r=rA/12/100,n=yrs*12;
+      let emi=0,total=0,intst=0;
+      if(P>0&&r>0&&n>0){
+        const x=Math.pow(1+r,n);
+        emi=(P*r*x)/(x-1);total=emi*n;intst=total-P;
       }
-
-      const emi = (P * R * Math.pow(1 + R, N)) / (Math.pow(1 + R, N) - 1);
-      const totalPayment = emi * N;
-      const totalInterest = totalPayment - P;
-
-      document.getElementById("emiValue").textContent = "₹" + emi.toFixed(2);
-      document.getElementById("interestValue").textContent = "₹" + totalInterest.toFixed(2);
-      document.getElementById("totalValue").textContent = "₹" + totalPayment.toFixed(2);
-      document.getElementById("result").classList.remove("hidden");
-
-      // Chart.js Pie Chart
-      const ctx = document.getElementById("emiChart").getContext("2d");
-      if (window.emiChart) window.emiChart.destroy();
-      window.emiChart = new Chart(ctx, {
-        type: "pie",
-        data: {
-          labels: ["Principal", "Interest"],
-          datasets: [{
-            data: [P, totalInterest],
-            backgroundColor: ["#10B981", "#F59E0B"],
-          }],
-        },
-        options: {
-          plugins: { legend: { position: "bottom" } },
-        },
-      });
+      document.getElementById('emiValue').innerText=formatINR(emi.toFixed(0));
+      document.getElementById('principalText').innerText=formatINR(P.toFixed(0));
+      document.getElementById('interestText').innerText=formatINR(intst.toFixed(0));
+      const totalSum=P+intst,pPct=(P/totalSum)*100,iPct=(intst/totalSum)*100;
+      document.getElementById('principalArc').setAttribute('stroke-dasharray',pPct+' '+(100-pPct));
+      document.getElementById('interestArc').setAttribute('stroke-dasharray',iPct+' '+(100-iPct));
+      document.getElementById('interestArc').setAttribute('stroke-dashoffset',-pPct);
+    }
+    ['loan','rate','years'].forEach(id=>{
+      const input=document.getElementById(id),slider=document.getElementById(id+'Slider');
+      const updateAll=()=>{slider.value=input.value;updateSliderFill(slider);calculateEMI();};
+      input.addEventListener('input',updateAll);
+      slider.addEventListener('input',()=>{input.value=slider.value;updateSliderFill(slider);calculateEMI();});
+      updateSliderFill(slider);
     });
+    calculateEMI();
   </script>
 </body>
 </html>
