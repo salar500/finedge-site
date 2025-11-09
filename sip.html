@@ -1,0 +1,133 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIP Calculator – Paisa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #f9fafb;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 5px;
+      outline: none;
+      background: linear-gradient(to right, #10B981 0%, #10B981 0%, #e5e7eb 0%, #e5e7eb 100%);
+      transition: background 0.2s ease;
+    }
+    input[type=range]:hover { opacity: 0.9; }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #10B981; border: 2px solid white; cursor: pointer;
+      box-shadow: 0 0 4px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <div id="site-header"></div>
+
+  <!-- Sidebar -->
+  <div id="site-sidebar"></div>
+
+  <!-- Overlay -->
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
+
+  <!-- Main content -->
+  <main class="flex-grow flex flex-col items-center justify-center px-4 py-10 mt-16">
+    <div class="w-full max-w-lg bg-white rounded-2xl shadow-lg p-6">
+      <h1 class="text-2xl font-bold text-emerald-600 mb-6 text-center">📈 SIP Calculator</h1>
+
+      <!-- Inputs -->
+      <div class="space-y-6">
+        <div>
+          <label class="text-sm font-medium text-gray-700">Monthly Investment (₹)</label>
+          <input id="sipAmount" type="number" value="10000" class="block w-full bg-emerald-50 rounded px-3 py-2 mt-1 font-semibold text-gray-800">
+          <input id="sipAmountSlider" type="range" min="500" max="100000" step="500" value="10000" class="mt-3">
+          <div class="flex justify-between text-xs text-gray-500 mt-1"><span>₹500</span><span>₹1L</span></div>
+        </div>
+
+        <div>
+          <label class="text-sm font-medium text-gray-700">Expected Annual Return (%)</label>
+          <input id="sipRate" type="number" value="12" class="block w-full bg-emerald-50 rounded px-3 py-2 mt-1 font-semibold text-gray-800">
+          <input id="sipRateSlider" type="range" min="1" max="30" step="0.1" value="12" class="mt-3">
+          <div class="flex justify-between text-xs text-gray-500 mt-1"><span>1%</span><span>30%</span></div>
+        </div>
+
+        <div>
+          <label class="text-sm font-medium text-gray-700">Investment Duration (Years)</label>
+          <input id="sipYears" type="number" value="15" class="block w-full bg-emerald-50 rounded px-3 py-2 mt-1 font-semibold text-gray-800">
+          <input id="sipYearsSlider" type="range" min="1" max="40" step="1" value="15" class="mt-3">
+          <div class="flex justify-between text-xs text-gray-500 mt-1"><span>1 year</span><span>40 years</span></div>
+        </div>
+      </div>
+
+      <!-- Output -->
+      <div class="mt-8 text-center">
+        <h2 class="text-lg font-semibold text-gray-700 mb-4">Investment Summary</h2>
+        <p class="text-gray-700 mb-2">Invested Amount: <span id="invested" class="font-semibold text-emerald-700">₹0</span></p>
+        <p class="text-gray-700 mb-2">Estimated Returns: <span id="returns" class="font-semibold text-emerald-700">₹0</span></p>
+        <p class="text-gray-900 text-lg font-bold mt-4">Total Value: <span id="totalValue" class="text-emerald-700">₹0</span></p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <div id="site-footer"></div>
+
+  <script>
+    // Load header, sidebar, and footer
+    Promise.all([
+      fetch("header.html").then(r => r.text()).then(h => document.getElementById("site-header").innerHTML = h),
+      fetch("sidebar.html").then(r => r.text()).then(h => document.getElementById("site-sidebar").innerHTML = h),
+      fetch("footer.html").then(r => r.text()).then(h => document.getElementById("site-footer").innerHTML = h)
+    ])
+    .catch(err => console.warn("Header/Sidebar/Footer load failed", err));
+
+    // Helper functions
+    function formatINR(v){return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(v);}
+    function updateSliderFill(slider){
+      const min=slider.min||0,max=slider.max||100,value=slider.value;
+      const pct=((value-min)*100)/(max-min);
+      slider.style.background=`linear-gradient(to right,#10B981 0%,#10B981 ${pct}%,#e5e7eb ${pct}%,#e5e7eb 100%)`;
+    }
+
+    function calculateSIP(){
+      const P=parseFloat(document.getElementById('sipAmount').value)||0;
+      const rA=parseFloat(document.getElementById('sipRate').value)||0;
+      const yrs=parseFloat(document.getElementById('sipYears').value)||0;
+      const n=yrs*12;
+      const r=rA/12/100;
+
+      // SIP formula: FV = P * [ (1+r)^n - 1 ] * (1+r)/r
+      const FV = P * ((Math.pow(1 + r, n) - 1) * (1 + r) / r);
+      const invested = P * n;
+      const returns = FV - invested;
+
+      document.getElementById('invested').innerText = formatINR(invested);
+      document.getElementById('returns').innerText = formatINR(returns);
+      document.getElementById('totalValue').innerText = formatINR(FV);
+    }
+
+    ['sipAmount','sipRate','sipYears'].forEach(id=>{
+      const input=document.getElementById(id);
+      const slider=document.getElementById(id+'Slider');
+      const updateAll=()=>{slider.value=input.value;updateSliderFill(slider);calculateSIP();};
+      input.addEventListener('input',updateAll);
+      slider.addEventListener('input',()=>{input.value=slider.value;updateSliderFill(slider);calculateSIP();});
+      updateSliderFill(slider);
+    });
+
+    calculateSIP();
+  </script>
+</body>
+</html>
