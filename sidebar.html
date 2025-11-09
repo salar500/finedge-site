@@ -1,6 +1,10 @@
 <!-- sidebar.html -->
-<aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 p-4 transform -translate-x-full transition-transform duration-300 ease-in-out">
+<aside
+  id="sidebar"
+  class="fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 p-4 transform -translate-x-full transition-transform duration-300 ease-in-out"
+>
   <h2 class="text-lg font-semibold text-emerald-600 mb-4">Calculators</h2>
+
   <ul class="space-y-3">
     <li>
       <a href="emi.html" class="block px-3 py-2 rounded hover:bg-emerald-50 text-gray-800">
@@ -13,12 +17,23 @@
       </a>
     </li>
     <li>
-      <a href="#" class="block px-3 py-2 rounded hover:bg-emerald-50 text-gray-400 cursor-not-allowed">
+      <a href="#" class="block px-3 py-2 rounded hover:bg-gray-50 text-gray-400 cursor-not-allowed">
         💰 SWP Calculator (Coming Soon)
       </a>
     </li>
   </ul>
-  <button id="closeSidebar" class="mt-6 text-sm text-gray-500 hover:text-emerald-600">
+
+  <hr class="my-4 border-gray-200">
+
+  <div class="space-y-2">
+    <a href="about.html" class="block px-3 py-2 rounded hover:bg-emerald-50 text-gray-700">ℹ️ About</a>
+    <a href="privacy.html" class="block px-3 py-2 rounded hover:bg-emerald-50 text-gray-700">🔒 Privacy Policy</a>
+  </div>
+
+  <button
+    id="closeSidebar"
+    class="mt-6 text-sm text-gray-500 hover:text-emerald-600 transition"
+  >
     Close Menu
   </button>
 </aside>
@@ -28,31 +43,26 @@
 
 <script>
   // Sidebar open/close logic
-  document.addEventListener("DOMContentLoaded", () => {
+  window.addEventListener("DOMContentLoaded", () => {
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("overlay");
     const menuBtn = document.getElementById("menuBtn");
     const closeSidebar = document.getElementById("closeSidebar");
 
-    if (menuBtn) {
-      menuBtn.addEventListener("click", () => {
-        sidebar.classList.remove("-translate-x-full");
-        overlay.classList.remove("hidden");
-      });
+    function openSidebar() {
+      if (!sidebar || !overlay) return;
+      sidebar.classList.remove("-translate-x-full");
+      overlay.classList.remove("hidden");
     }
 
-    if (closeSidebar) {
-      closeSidebar.addEventListener("click", () => {
-        sidebar.classList.add("-translate-x-full");
-        overlay.classList.add("hidden");
-      });
+    function closeSidebarFunc() {
+      if (!sidebar || !overlay) return;
+      sidebar.classList.add("-translate-x-full");
+      overlay.classList.add("hidden");
     }
 
-    if (overlay) {
-      overlay.addEventListener("click", () => {
-        sidebar.classList.add("-translate-x-full");
-        overlay.classList.add("hidden");
-      });
-    }
+    menuBtn?.addEventListener("click", openSidebar);
+    closeSidebar?.addEventListener("click", closeSidebarFunc);
+    overlay?.addEventListener("click", closeSidebarFunc);
   });
 </script>
