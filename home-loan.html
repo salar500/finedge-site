@@ -70,6 +70,7 @@
         <label class="text-sm font-medium text-gray-700">Loan Amount (₹)</label>
         <input id="loanAmount" type="number" min="10000" max="100000000" step="10000" value="4000000"
           class="block w-full bg-green-50 rounded px-3 py-2 mt-1 font-semibold text-gray-800">
+        <p class="text-xs text-gray-500 mt-1">(Auto-calculates = Property - Down Payment)</p>
       </div>
 
       <div>
@@ -114,6 +115,8 @@
   <div id="site-footer"></div>
 
   <script>
+    let manualLoanEdit = false;
+
     function formatINR(v){return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(v);}
 
     function updateSliderFill(slider){
@@ -144,6 +147,20 @@
       document.getElementById('interestArc').setAttribute('stroke-dashoffset',-pPct);
     }
 
+    function syncLoanAmount(){
+      if(!manualLoanEdit){
+        const property=parseFloat(document.getElementById('propertyValue').value)||0;
+        const down=parseFloat(document.getElementById('downPayment').value)||0;
+        const loan=Math.max(property - down, 0);
+        document.getElementById('loanAmount').value=loan.toFixed(0);
+      }
+      calculateHomeLoan();
+    }
+
+    document.getElementById('propertyValue').addEventListener('input',()=>{manualLoanEdit=false;syncLoanAmount();});
+    document.getElementById('downPayment').addEventListener('input',()=>{manualLoanEdit=false;syncLoanAmount();});
+    document.getElementById('loanAmount').addEventListener('input',()=>{manualLoanEdit=true;calculateHomeLoan();});
+
     ['rate','years'].forEach(id=>{
       const input=document.getElementById(id),slider=document.getElementById(id+'Slider');
       const updateAll=()=>{slider.value=input.value;updateSliderFill(slider);calculateHomeLoan();};
@@ -152,11 +169,7 @@
       updateSliderFill(slider);
     });
 
-    ['propertyValue','downPayment','loanAmount'].forEach(id=>{
-      document.getElementById(id).addEventListener('input',calculateHomeLoan);
-    });
-
-    calculateHomeLoan();
+    syncLoanAmount();
 
     // Load Header, Sidebar, Footer
     Promise.all([
