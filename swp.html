@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Paisa - SWP Calculator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SWP Calculator – Paisa</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
   <style>
     body {
       background-color: #f9fafb;
-      font-family: system-ui, sans-serif;
-      margin: 0;
+      color: #1f2937;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+      margin: 0;
     }
 
+    /* Range styling */
     input[type=range] {
       -webkit-appearance: none;
       width: 100%;
@@ -23,16 +23,18 @@
       border-radius: 5px;
       outline: none;
       background: linear-gradient(to right, #10B981 0%, #10B981 0%, #e5e7eb 0%, #e5e7eb 100%);
+      transition: background 0.2s ease;
     }
-
+    input[type=range]:hover { opacity: 0.9; }
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       background: #10B981;
       border: 2px solid white;
       cursor: pointer;
+      box-shadow: 0 0 4px rgba(0,0,0,0.3);
     }
 
     .pie-wrapper {
@@ -62,70 +64,55 @@
   <!-- Overlay -->
   <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
 
-  <main class="flex-grow flex flex-col items-center px-4 py-10 mt-16">
-    <div class="w-full max-w-xl bg-white shadow-md rounded-2xl p-6">
-      <div class="flex items-center mb-6">
-        <div class="w-10 h-10 rounded-md bg-emerald-500 flex items-center justify-center shadow-sm">
-          <span class="text-white text-xl font-bold">₹</span>
-        </div>
-        <div class="ml-3">
-          <h1 class="text-2xl font-bold text-emerald-600 tracking-tight">Paisa</h1>
-        </div>
+  <!-- Main Content -->
+  <main class="flex-grow max-w-2xl mx-auto bg-white rounded-xl shadow p-6 mt-20 mb-10">
+    <h1 class="text-2xl font-bold text-emerald-600 mb-6 text-center">💰 SWP Calculator</h1>
+
+    <div class="space-y-6">
+      <div>
+        <label class="text-sm font-medium text-gray-700">Initial Investment (₹)</label>
+        <input id="investment" type="number" min="10000" value="500000"
+          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
+        <input id="investmentSlider" type="range" min="10000" max="10000000" step="10000" value="500000" class="mt-3 slider">
       </div>
 
-      <h2 class="text-xl font-semibold text-gray-800 mb-6">💰 SWP Calculator</h2>
-
-      <!-- Inputs -->
-      <div class="space-y-8">
-        <div>
-          <label class="text-sm font-medium text-gray-700">Initial Investment</label>
-          <input id="investment" type="number" min="10000" max="10000000" step="1000" value="1000000"
-            class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
-          <input id="investmentSlider" type="range" min="10000" max="10000000" step="10000" value="1000000" class="mt-3 slider">
-        </div>
-
-        <div>
-          <label class="text-sm font-medium text-gray-700">Monthly Withdrawal</label>
-          <input id="withdrawal" type="number" min="1000" max="1000000" step="1000" value="10000"
-            class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
-          <input id="withdrawalSlider" type="range" min="1000" max="1000000" step="1000" value="10000" class="mt-3 slider">
-        </div>
-
-        <div>
-          <label class="text-sm font-medium text-gray-700">Expected Annual Return (%)</label>
-          <input id="rate" type="number" min="0" max="20" step="0.1" value="8"
-            class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
-          <input id="rateSlider" type="range" min="0" max="20" step="0.1" value="8" class="mt-3 slider">
-        </div>
-
-        <div>
-          <label class="text-sm font-medium text-gray-700">Duration (Years)</label>
-          <input id="years" type="number" min="1" max="40" step="1" value="10"
-            class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
-          <input id="yearsSlider" type="range" min="1" max="40" step="1" value="10" class="mt-3 slider">
-        </div>
+      <div>
+        <label class="text-sm font-medium text-gray-700">Withdrawal Amount (₹/month)</label>
+        <input id="withdrawal" type="number" min="1000" value="10000"
+          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
+        <input id="withdrawalSlider" type="range" min="1000" max="100000" step="500" value="10000" class="mt-3 slider">
       </div>
 
-      <!-- Output -->
-      <div class="mt-10 text-center">
-        <h3 class="text-lg font-semibold text-gray-700 mb-4">Results</h3>
-
-        <div class="flex flex-col items-center justify-center pie-wrapper">
-          <svg id="swpPieChart" viewBox="0 0 36 36" class="transform -rotate-90">
-            <circle cx="18" cy="18" r="15.915" fill="none" stroke="#E5E7EB" stroke-width="6"></circle>
-            <circle id="withdrawArc" cx="18" cy="18" r="15.915" fill="none" stroke="#A7F3D0" stroke-width="6"
-              stroke-dasharray="0 100" stroke-linecap="round"></circle>
-            <circle id="growthArc" cx="18" cy="18" r="15.915" fill="none" stroke="#047857" stroke-width="6"
-              stroke-dasharray="0 100" stroke-dashoffset="0" stroke-linecap="round"></circle>
-          </svg>
-        </div>
-
-        <div class="mt-4 space-y-2 text-sm text-gray-700">
-          <p><span class="inline-block w-3 h-3 bg-emerald-200 rounded-full mr-2"></span>Total Withdrawn: <span id="totalWithdrawText">₹0</span></p>
-          <p><span class="inline-block w-3 h-3 bg-emerald-700 rounded-full mr-2"></span>Final Value: <span id="finalValueText">₹0</span></p>
-        </div>
-        <p class="font-semibold text-gray-900 text-lg mt-4">Total Growth: <span id="totalGrowthText">₹0</span></p>
+      <div>
+        <label class="text-sm font-medium text-gray-700">Expected Annual Return (%)</label>
+        <input id="rate" type="number" min="0" max="20" step="0.1" value="8"
+          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
+        <input id="rateSlider" type="range" min="0" max="20" step="0.1" value="8" class="mt-3 slider">
       </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-700">Investment Duration (years)</label>
+        <input id="years" type="number" min="1" max="50" step="1" value="10"
+          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 outline-none font-semibold text-gray-800">
+        <input id="yearsSlider" type="range" min="1" max="50" step="1" value="10" class="mt-3 slider">
+      </div>
+    </div>
+
+    <div class="mt-10 text-center">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4">SWP Summary</h3>
+      <div class="flex flex-col items-center justify-center pie-wrapper">
+        <svg id="pieChart" viewBox="0 0 36 36" class="transform -rotate-90">
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#E5E7EB" stroke-width="6"></circle>
+          <circle id="totalArc" cx="18" cy="18" r="15.915" fill="none" stroke="#A7F3D0" stroke-width="6" stroke-dasharray="0 100" stroke-linecap="round"></circle>
+          <circle id="gainArc" cx="18" cy="18" r="15.915" fill="none" stroke="#047857" stroke-width="6" stroke-dasharray="0 100" stroke-linecap="round"></circle>
+        </svg>
+      </div>
+
+      <div class="mt-4 text-sm text-gray-700">
+        <p><span class="inline-block w-3 h-3 bg-emerald-200 rounded-full mr-2"></span> Total Withdrawn: <span id="withdrawText">₹0</span></p>
+        <p><span class="inline-block w-3 h-3 bg-emerald-700 rounded-full mr-2"></span> Final Value: <span id="gainText">₹0</span></p>
+      </div>
+      <p class="font-semibold text-gray-900 text-lg mt-4">Balance at End: <span id="finalValue">₹0</span></p>
     </div>
   </main>
 
@@ -133,65 +120,83 @@
   <div id="site-footer"></div>
 
   <script>
-    function formatINR(v){return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(v);}
-    function updateSliderFill(slider){
-      const min=slider.min||0,max=slider.max||100,value=slider.value;
-      const pct=((value-min)*100)/(max-min);
-      slider.style.background=`linear-gradient(to right,#10B981 0%,#10B981 ${pct}%,#e5e7eb ${pct}%,#e5e7eb 100%)`;
+    // Format INR values
+    const formatINR = v => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v);
+
+    // Update slider fill
+    function updateSliderFill(slider) {
+      const min = slider.min || 0, max = slider.max || 100, val = slider.value;
+      const pct = ((val - min) * 100) / (max - min);
+      slider.style.background = `linear-gradient(to right, #10B981 0%, #10B981 ${pct}%, #e5e7eb ${pct}%, #e5e7eb 100%)`;
     }
 
-    function calculateSWP(){
-      const investment=parseFloat(document.getElementById('investment').value)||0;
-      const withdrawal=parseFloat(document.getElementById('withdrawal').value)||0;
-      const rate=parseFloat(document.getElementById('rate').value)/100/12||0;
-      const months=(parseFloat(document.getElementById('years').value)||0)*12;
+    function calculateSWP() {
+      const P = parseFloat(document.getElementById('investment').value) || 0;
+      const withdrawal = parseFloat(document.getElementById('withdrawal').value) || 0;
+      const r = (parseFloat(document.getElementById('rate').value) / 12 / 100) || 0;
+      const years = parseFloat(document.getElementById('years').value) || 0;
+      const n = years * 12;
 
-      let balance=investment;
-      let totalWithdrawn=0;
-      for(let i=0;i<months;i++){
-        balance+=balance*rate;
-        if(balance>withdrawal){
-          balance-=withdrawal;
-          totalWithdrawn+=withdrawal;
-        } else {
-          totalWithdrawn+=balance;
-          balance=0;
-          break;
-        }
+      let totalWithdrawn = withdrawal * n;
+      let balance = P;
+
+      for (let i = 0; i < n; i++) {
+        balance = (balance - withdrawal) * (1 + r);
+        if (balance < 0) { balance = 0; break; }
       }
 
-      const totalGrowth=(balance+totalWithdrawn)-investment;
+      let gain = balance > 0 ? balance - P + totalWithdrawn : 0;
 
-      document.getElementById('totalWithdrawText').innerText=formatINR(totalWithdrawn);
-      document.getElementById('finalValueText').innerText=formatINR(balance);
-      document.getElementById('totalGrowthText').innerText=formatINR(totalGrowth);
+      document.getElementById('withdrawText').innerText = formatINR(totalWithdrawn);
+      document.getElementById('gainText').innerText = formatINR(gain);
+      document.getElementById('finalValue').innerText = formatINR(balance);
 
-      const totalSum=totalWithdrawn+balance;
-      const withdrawPct=(totalWithdrawn/totalSum)*100;
-      const growthPct=(balance/totalSum)*100;
+      const total = totalWithdrawn + gain;
+      const wPct = (totalWithdrawn / total) * 100;
+      const gPct = (gain / total) * 100;
 
-      document.getElementById('withdrawArc').setAttribute('stroke-dasharray',withdrawPct+' '+(100-withdrawPct));
-      document.getElementById('growthArc').setAttribute('stroke-dasharray',growthPct+' '+(100-growthPct));
-      document.getElementById('growthArc').setAttribute('stroke-dashoffset',-withdrawPct);
+      document.getElementById('totalArc').setAttribute('stroke-dasharray', `${wPct} ${100 - wPct}`);
+      document.getElementById('gainArc').setAttribute('stroke-dasharray', `${gPct} ${100 - gPct}`);
+      document.getElementById('gainArc').setAttribute('stroke-dashoffset', -wPct);
     }
 
-    ['investment','withdrawal','rate','years'].forEach(id=>{
-      const input=document.getElementById(id);
-      const slider=document.getElementById(id+'Slider');
-      const updateAll=()=>{slider.value=input.value;updateSliderFill(slider);calculateSWP();};
-      input.addEventListener('input',updateAll);
-      slider.addEventListener('input',()=>{input.value=slider.value;updateSliderFill(slider);calculateSWP();});
+    // Sync sliders & inputs
+    ['investment', 'withdrawal', 'rate', 'years'].forEach(id => {
+      const input = document.getElementById(id);
+      const slider = document.getElementById(id + 'Slider');
+      const update = () => { slider.value = input.value; updateSliderFill(slider); calculateSWP(); };
+      input.addEventListener('input', update);
+      slider.addEventListener('input', () => { input.value = slider.value; updateSliderFill(slider); calculateSWP(); });
       updateSliderFill(slider);
     });
 
     calculateSWP();
 
-    // Load shared layout
+    // Load header, sidebar, and footer
     Promise.all([
-      fetch('header.html').then(r=>r.text()).then(h=>document.getElementById('site-header').innerHTML=h),
-      fetch('sidebar.html').then(r=>r.text()).then(h=>document.getElementById('site-sidebar').innerHTML=h),
-      fetch('footer.html').then(r=>r.text()).then(h=>document.getElementById('site-footer').innerHTML=h)
-    ]).catch(err=>console.warn('Layout load failed',err));
+      fetch("header.html").then(r => r.text()).then(h => document.getElementById("site-header").innerHTML = h),
+      fetch("sidebar.html").then(r => r.text()).then(h => document.getElementById("site-sidebar").innerHTML = h),
+      fetch("footer.html").then(r => r.text()).then(h => document.getElementById("site-footer").innerHTML = h)
+    ]).then(() => {
+      // Reattach menu toggle logic after loading
+      const sidebar = document.getElementById("sidebar");
+      const overlay = document.getElementById("overlay");
+      const menuBtn = document.getElementById("menuBtn");
+      const closeSidebar = document.getElementById("closeSidebar");
+
+      function openSidebar() {
+        sidebar.classList.remove("-translate-x-full");
+        overlay.classList.remove("hidden");
+      }
+      function closeSidebarFunc() {
+        sidebar.classList.add("-translate-x-full");
+        overlay.classList.add("hidden");
+      }
+
+      menuBtn?.addEventListener("click", openSidebar);
+      closeSidebar?.addEventListener("click", closeSidebarFunc);
+      overlay?.addEventListener("click", closeSidebarFunc);
+    }).catch(err => console.warn("Header/Sidebar/Footer load failed", err));
   </script>
 </body>
 </html>
