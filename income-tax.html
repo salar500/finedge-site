@@ -1,278 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Income Tax Calculator - Paisa</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paisa Income Tax Calculator - Old vs New Regime</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      background-color: #f9fafb;
-      margin: 0;
-      padding-top: 4rem;
-      font-family: system-ui, sans-serif;
-    }
-
-    input[type=range] {
-      -webkit-appearance: none;
-      width: 100%;
-      height: 6px;
-      border-radius: 5px;
-      outline: none;
-      background: linear-gradient(to right, #10B981 0%, #10B981 0%, #e5e7eb 0%, #e5e7eb 100%);
-      transition: background 0.2s ease;
-    }
-    input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 20px; height: 20px; border-radius: 50%;
-      background: #10B981; border: 2px solid white; cursor: pointer;
-      box-shadow: 0 0 4px rgba(0,0,0,0.3);
-    }
-
+    body { font-family: system-ui, sans-serif; background: #f9fafb; padding-top: 4rem; }
     .error { color: #dc2626; font-size: 0.8rem; }
+    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   </style>
 </head>
-
 <body>
-  <!-- Header -->
-  <div id="site-header"></div>
 
-  <!-- Sidebar -->
-  <div id="site-sidebar"></div>
+<main class="max-w-5xl mx-auto bg-white p-6 rounded-2xl shadow-md">
+  <h1 class="text-2xl font-bold text-emerald-700 mb-6">Paisa Income Tax Calculator</h1>
 
-  <!-- Overlay -->
-  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
+  <!-- Assessment Year -->
+  <div class="mb-4">
+    <label class="block font-medium text-gray-700">Assessment Year</label>
+    <select id="assessmentYear" class="mt-1 block w-full rounded px-3 py-2 border bg-green-50">
+      <option value="2025-26" selected>2025–2026</option>
+      <option value="2024-25">2024–2025</option>
+      <option value="2023-24">2023–2024</option>
+    </select>
+  </div>
 
-  <main class="max-w-2xl mx-auto bg-white rounded-2xl shadow-md p-6 mt-10">
-    <div class="flex items-center mb-6 justify-center">
-      <div class="w-10 h-10 rounded-md bg-emerald-500 flex items-center justify-center shadow-sm">
-        <span class="text-white text-xl font-bold">₹</span>
-      </div>
-      <div class="ml-3">
-        <h1 class="text-2xl font-bold text-emerald-600 tracking-tight">Income Tax Calculator</h1>
-        <p class="text-sm text-gray-500">FY 2025–26 • Compare Old vs New Regime</p>
-      </div>
+  <!-- Age Category -->
+  <div class="mb-4">
+    <label class="block font-medium text-gray-700">Age Category</label>
+    <select id="ageGroup" class="mt-1 block w-full rounded px-3 py-2 border bg-green-50">
+      <option value="below60" selected>Below 60 years</option>
+      <option value="60to80">60–80 years (Senior)</option>
+      <option value="above80">Above 80 years (Super Senior)</option>
+    </select>
+  </div>
+
+  <!-- Income Section -->
+  <h2 class="font-semibold text-gray-700 mt-6 mb-2">Income Section</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label>Gross Salary (₹)</label>
+      <input type="number" id="grossSalary" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
     </div>
-
-    <!-- Inputs -->
-    <div class="space-y-8">
-      <!-- Assessment Year -->
-      <div>
-        <label class="text-sm font-medium text-gray-700">Assessment Year</label>
-        <select id="assessmentYear" class="block w-full bg-green-50 rounded px-3 py-2 mt-1 font-semibold text-gray-800">
-          <option value="2025-26" selected>2025–2026</option>
-          <option value="2024-25">2024–2025</option>
-          <option value="2023-24">2023–2024</option>
-        </select>
-      </div>
-
-      <!-- Age -->
-      <div>
-        <label class="text-sm font-medium text-gray-700">Age Group</label>
-        <select id="ageGroup" class="block w-full bg-green-50 rounded px-3 py-2 mt-1 font-semibold text-gray-800">
-          <option value="below60" selected>Below 60 years</option>
-          <option value="60to80">60–80 years</option>
-          <option value="above80">Above 80 years</option>
-        </select>
-      </div>
-
-      <!-- Gross Income -->
-      <div>
-        <label class="text-sm font-medium text-gray-700">Annual Gross Income (₹)</label>
-        <input id="income" type="number" min="0" step="1000" value="1200000"
-          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 font-semibold text-gray-800">
-        <input id="incomeSlider" type="range" min="0" max="10000000" step="1000" value="1200000" class="mt-3 slider">
-      </div>
-
-      <!-- Old/New Regime -->
-      <div>
-        <label class="text-sm font-medium text-gray-700">Tax Regime</label>
-        <div class="flex gap-4 mt-2">
-          <button id="oldRegimeBtn" class="flex-1 py-2 rounded-lg border border-emerald-600 text-emerald-700 font-semibold hover:bg-emerald-50">Old Regime</button>
-          <button id="newRegimeBtn" class="flex-1 py-2 rounded-lg bg-emerald-600 text-white font-semibold hover:bg-emerald-700">New Regime</button>
-        </div>
-      </div>
-
-      <!-- Deductions -->
-      <div id="deductionBlock">
-        <label class="text-sm font-medium text-gray-700">Deductions</label>
-
-        <input id="deductions" type="number" min="0" max="150000" step="1000" value="150000"
-          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 font-semibold text-gray-800" placeholder="80C Investments (Max ₹1,50,000)">
-        
-        <input id="nps" type="number" min="0" max="50000" step="1000" value="0"
-          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 font-semibold text-gray-800" placeholder="NPS 80CCD(1B) Max ₹50,000">
-        
-        <input id="medical" type="number" min="0" step="1000" value="0"
-          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 font-semibold text-gray-800" placeholder="Medical Insurance 80D">
-        
-        <input id="charity" type="number" min="0" step="1000" value="0"
-          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 font-semibold text-gray-800" placeholder="Donations 80G">
-        
-        <input id="educationLoan" type="number" min="0" step="1000" value="0"
-          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 font-semibold text-gray-800" placeholder="Education Loan Interest 80E">
-        
-        <input id="interestDeposits" type="number" min="0" max="10000" step="1000" value="0"
-          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 font-semibold text-gray-800" placeholder="Interest from Savings 80TTA (Max ₹10,000)">
-
-        <p class="text-xs text-gray-500 mt-1">Applicable under Old Regime only</p>
-      </div>
+    <div>
+      <label>Other Income (₹)</label>
+      <input type="number" id="otherIncome" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
     </div>
-
-    <!-- Output -->
-    <div class="mt-10 text-center">
-      <h3 class="text-lg font-semibold text-gray-700 mb-4">Tax Summary</h3>
-
-      <div class="flex flex-col items-center justify-center pie-wrapper mb-4">
-        <svg id="pieChart" viewBox="0 0 36 36" width="200" height="200" class="mx-auto">
-          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#E5E7EB" stroke-width="6"></circle>
-          <circle id="taxFreeArc" cx="18" cy="18" r="15.915" fill="none" stroke="#A7F3D0" stroke-width="6" stroke-dasharray="0 100" stroke-linecap="round"></circle>
-          <circle id="taxedArc" cx="18" cy="18" r="15.915" fill="none" stroke="#047857" stroke-width="6" stroke-dasharray="0 100" stroke-linecap="round"></circle>
-        </svg>
-      </div>
-
-      <div class="space-y-2 text-sm text-gray-700">
-        <p><span class="inline-block w-3 h-3 bg-emerald-200 rounded-full mr-2"></span>Tax-Free Income: <span id="taxFreeText">₹0</span></p>
-        <p><span class="inline-block w-3 h-3 bg-emerald-700 rounded-full mr-2"></span>Taxed Portion: <span id="taxedText">₹0</span></p>
-      </div>
-
-      <div class="mt-4 text-gray-800 font-semibold space-y-1">
-        <p>Taxable Income: <span id="taxableIncome">₹0</span></p>
-        <p>Total Tax Payable: <span id="taxValue" class="text-emerald-700 text-lg">₹0</span></p>
-        <p>Effective Tax Rate: <span id="taxRate">0%</span></p>
-      </div>
+    <div>
+      <label>Interest Income (₹)</label>
+      <input type="number" id="interestIncome" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
     </div>
-  </main>
+    <div>
+      <label>Rental Income (₹)</label>
+      <input type="number" id="rentalIncome" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>Interest Paid on Home Loan (₹)</label>
+      <input type="number" id="homeLoanInterest" value="0" min="0" max="200000" class="block w-full px-3 py-2 rounded bg-green-50">
+      <p class="text-xs text-gray-500">Max ₹2,00,000 deduction</p>
+    </div>
+  </div>
 
-  <!-- Footer -->
-  <div id="site-footer"></div>
+  <!-- Deductions Section -->
+  <h2 class="font-semibold text-gray-700 mt-6 mb-2">Deductions</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label>80C Investments (₹)</label>
+      <input type="number" id="ded80C" value="0" min="0" max="150000" class="block w-full px-3 py-2 rounded bg-green-50">
+      <p class="text-xs text-gray-500">Max ₹1,50,000</p>
+    </div>
+    <div>
+      <label>NPS Contribution 80CCD(1B) (₹)</label>
+      <input type="number" id="dedNPS" value="0" min="0" max="50000" class="block w-full px-3 py-2 rounded bg-green-50">
+      <p class="text-xs text-gray-500">Max ₹50,000</p>
+    </div>
+    <div>
+      <label>Medical Insurance 80D (₹)</label>
+      <input type="number" id="ded80D" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>Donations 80G (₹)</label>
+      <input type="number" id="ded80G" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>Education Loan Interest 80E (₹)</label>
+      <input type="number" id="ded80E" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>Savings Account Interest 80TTA/TTB (₹)</label>
+      <input type="number" id="ded80TTA" value="0" min="0" max="10000" class="block w-full px-3 py-2 rounded bg-green-50">
+      <p class="text-xs text-gray-500">Max ₹10,000</p>
+    </div>
+  </div>
 
-  <script>
-    let regime = "new";
+  <!-- HRA Section -->
+  <h2 class="font-semibold text-gray-700 mt-6 mb-2">HRA Exemption</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label>Basic Salary (₹)</label>
+      <input type="number" id="basicSalary" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>DA (₹)</label>
+      <input type="number" id="daSalary" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>HRA Received (₹)</label>
+      <input type="number" id="hraReceived" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>Total Rent Paid (₹)</label>
+      <input type="number" id="rentPaid" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>Metro City?</label>
+      <select id="metroCity" class="mt-1 block w-full rounded px-3 py-2 border bg-green-50">
+        <option value="yes">Yes</option>
+        <option value="no" selected>No</option>
+      </select>
+    </div>
+  </div>
 
-    function formatINR(num) {
-      return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(num);
-    }
+  <!-- Old/New Regime Selector -->
+  <h2 class="font-semibold text-gray-700 mt-6 mb-2">Tax Regime</h2>
+  <div class="flex gap-4 mb-6">
+    <button id="oldRegimeBtn" class="flex-1 py-2 rounded border border-emerald-600 text-emerald-700 font-semibold hover:bg-emerald-50">Old Regime</button>
+    <button id="newRegimeBtn" class="flex-1 py-2 rounded bg-emerald-600 text-white font-semibold hover:bg-emerald-700">New Regime</button>
+  </div>
 
-    function updateSliderFill(slider) {
-      const min = slider.min || 0, max = slider.max || 100, value = slider.value;
-      const pct = ((value - min) * 100) / (max - min);
-      slider.style.background = `linear-gradient(to right, #10B981 0%, #10B981 ${pct}%, #e5e7eb ${pct}%, #e5e7eb 100%)`;
-    }
+  <!-- Action -->
+  <button id="calculateBtn" class="w-full py-2 bg-emerald-600 text-white rounded font-semibold hover:bg-emerald-700">Calculate Tax</button>
 
-    function showToast(msg) {
-      const old = document.getElementById("toast");
-      if (old) old.remove();
-      const t = document.createElement("div");
-      t.id = "toast";
-      t.textContent = msg;
-      t.className = "fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-fade";
-      document.body.appendChild(t);
-      setTimeout(() => t.remove(), 2000);
-    }
+  <!-- Results -->
+  <div id="result" class="mt-6 bg-green-50 p-4 rounded hidden">
+    <h3 class="font-semibold text-gray-700">Tax Summary</h3>
+    <p>Gross Income: ₹<span id="resGross">0</span></p>
+    <p>Total Deductions: ₹<span id="resDeduction">0</span></p>
+    <p>HRA Exemption: ₹<span id="resHRA">0</span></p>
+    <p>Taxable Income: ₹<span id="resTaxable">0</span></p>
+    <p>Estimated Tax Payable: ₹<span id="resTax">0</span></p>
+    <p>Effective Tax Rate: <span id="resRate">0%</span></p>
+  </div>
+</main>
 
-    function calculateTax() {
-      const income = parseFloat(document.getElementById("income").value) || 0;
-      const age = document.getElementById("ageGroup").value;
+<script>
+let regime = 'new';
+const maxValues = { '80C':150000, 'NPS':50000, '80TTA':10000, 'HomeLoan':200000 };
 
-      // Old regime deductions
-      const deductions = regime === "old" ? (
-        (parseFloat(document.getElementById("deductions").value) || 0) +
-        (parseFloat(document.getElementById("nps").value) || 0) +
-        (parseFloat(document.getElementById("medical").value) || 0) +
-        (parseFloat(document.getElementById("charity").value) || 0) +
-        (parseFloat(document.getElementById("educationLoan").value) || 0) +
-        Math.min(parseFloat(document.getElementById("interestDeposits").value) || 0, 10000)
-      ) : 0;
+// Regime buttons
+document.getElementById('oldRegimeBtn').addEventListener('click',()=>{ regime='old'; toggleRegime(); });
+document.getElementById('newRegimeBtn').addEventListener('click',()=>{ regime='new'; toggleRegime(); });
 
-      let taxable = Math.max(income - deductions, 0);
-      let tax = 0;
+function toggleRegime(){
+  if(regime==='old'){
+    document.getElementById('oldRegimeBtn').classList.add('bg-emerald-600','text-white');
+    document.getElementById('newRegimeBtn').classList.remove('bg-emerald-600','text-white');
+  }else{
+    document.getElementById('newRegimeBtn').classList.add('bg-emerald-600','text-white');
+    document.getElementById('oldRegimeBtn').classList.remove('bg-emerald-600','text-white');
+  }
+}
 
-      if (regime === "old") {
-        let slabs;
-        if (age === "below60") slabs = [250000, 500000, 1000000];
-        else if (age === "60to80") slabs = [300000, 500000, 1000000];
-        else slabs = [500000, 1000000];
-        if (taxable <= slabs[0]) tax = 0;
-        else if (taxable <= slabs[1]) tax = 0.05 * (taxable - slabs[0]);
-        else if (taxable <= slabs[2]) tax = 12500 + 0.2 * (taxable - slabs[1]);
-        else tax = 112500 + 0.3 * (taxable - slabs[2]);
-      } else {
-        const slabs = [300000, 600000, 900000, 1200000, 1500000];
-        if (taxable <= slabs[0]) tax = 0;
-        else if (taxable <= slabs[1]) tax = 0.05 * (taxable - slabs[0]);
-        else if (taxable <= slabs[2]) tax = 15000 + 0.1 * (taxable - slabs[1]);
-        else if (taxable <= slabs[3]) tax = 45000 + 0.15 * (taxable - slabs[2]);
-        else if (taxable <= slabs[4]) tax = 90000 + 0.2 * (taxable - slabs[3]);
-        else tax = 150000 + 0.3 * (taxable - slabs[4]);
-      }
+// Format INR
+function formatINR(num){ return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(num); }
 
-      if (regime === "new" && taxable <= 1200000 && tax > 0) tax = 0;
-      if (regime === "old" && taxable <= 500000 && tax > 0) tax = 0;
+// Input fetch and validation
+function getInputValue(id,cap=null){
+  const el=document.getElementById(id);
+  let val=parseFloat(el.value)||0;
+  if(val<0){ alert('Negative value not allowed'); val=0; el.value=0; }
+  if(cap!==null && val>cap){ val=cap; el.value=cap; }
+  return val;
+}
 
-      const rate = income > 0 ? ((tax / income) * 100).toFixed(2) : 0;
-      const taxFree = income - taxable;
-      const taxed = taxable;
+// HRA Calculation
+function calcHRA(basic,da,hra,rent,metro){
+  const perc=metro==='yes'?0.5:0.4;
+  return Math.max(Math.min(hra, rent-0.1*basic, perc*(basic+da)),0);
+}
 
-      document.getElementById("taxableIncome").textContent = formatINR(taxable);
-      document.getElementById("taxValue").textContent = formatINR(tax);
-      document.getElementById("taxRate").textContent = rate + "%";
-      document.getElementById("taxFreeText").textContent = formatINR(taxFree);
-      document.getElementById("taxedText").textContent = formatINR(taxed);
+// Tax Calculation (accurate slabs FY 2025-26)
+function calcTax(taxable){
+  let tax=0;
+  if(regime==='old'){
+    // Old Regime slabs below 60 (simplified)
+    const slabs=[250000,500000,1000000];
+    if(taxable<=slabs[0]) tax=0;
+    else if(taxable<=slabs[1]) tax=0.05*(taxable-slabs[0]);
+    else if(taxable<=slabs[2]) tax=12500+0.2*(taxable-slabs[1]);
+    else tax=112500+0.3*(taxable-slabs[2]);
+    if(taxable<=500000) tax=0; // 87A rebate
+  }else{
+    // New Regime slabs FY25-26
+    const slabs=[300000,600000,900000,1200000,1500000];
+    if(taxable<=slabs[0]) tax=0;
+    else if(taxable<=slabs[1]) tax=0.05*(taxable-slabs[0]);
+    else if(taxable<=slabs[2]) tax=15000+0.1*(taxable-slabs[1]);
+    else if(taxable<=slabs[3]) tax=45000+0.15*(taxable-slabs[2]);
+    else if(taxable<=slabs[4]) tax=90000+0.2*(taxable-slabs[3]);
+    else tax=150000+0.3*(taxable-slabs[4]);
+    if(taxable<=1200000) tax=0; // 87A rebate
+  }
+  return tax;
+}
 
-      const total = income || 1;
-      const freePct = (taxFree / total) * 100, taxedPct = (taxed / total) * 100;
-      document.getElementById("taxFreeArc").setAttribute("stroke-dasharray", freePct + " " + (100 - freePct));
-      document.getElementById("taxedArc").setAttribute("stroke-dasharray", taxedPct + " " + (100 - taxedPct));
-      document.getElementById("taxedArc").setAttribute("stroke-dashoffset", -freePct);
-    }
+document.getElementById('calculateBtn').addEventListener('click',()=>{
+  // Income
+  const gross=getInputValue('grossSalary');
+  const other=getInputValue('otherIncome');
+  const interest=getInputValue('interestIncome');
+  const rentInc=getInputValue('rentalIncome');
+  const loanInt=getInputValue('homeLoanInterest',maxValues.HomeLoan);
 
-    // Event listeners
-    ["income","incomeSlider","ageGroup","deductions","nps","medical","charity","educationLoan","interestDeposits"].forEach(id => {
-      const elem = document.getElementById(id);
-      elem?.addEventListener("input", () => {
-        if(id==="income") { document.getElementById("incomeSlider").value = elem.value; updateSliderFill(document.getElementById("incomeSlider")); }
-        if(id==="incomeSlider") { document.getElementById("income").value = elem.value; updateSliderFill(elem); }
-        calculateTax();
-      });
-      elem?.addEventListener("change", calculateTax);
-    });
+  // Deductions
+  const ded80C=getInputValue('ded80C',maxValues['80C']);
+  const dedNPS=getInputValue('dedNPS',maxValues['NPS']);
+  const ded80D=getInputValue('ded80D');
+  const ded80G=getInputValue('ded80G');
+  const ded80E=getInputValue('ded80E');
+  const ded80TTA=getInputValue('ded80TTA',maxValues['80TTA']);
 
-    document.getElementById("oldRegimeBtn").addEventListener("click", () => {
-      regime = "old";
-      document.getElementById("oldRegimeBtn").classList.add("bg-emerald-600","text-white");
-      document.getElementById("newRegimeBtn").classList.remove("bg-emerald-600","text-white");
-      document.getElementById("deductionBlock").style.display = "block";
-      showToast("Old Regime selected");
-      calculateTax();
-    });
+  // HRA
+  const basic=getInputValue('basicSalary');
+  const da=getInputValue('daSalary');
+  const hraReceived=getInputValue('hraReceived');
+  const rentPaid=getInputValue('rentPaid');
+  const metro=document.getElementById('metroCity').value;
 
-    document.getElementById("newRegimeBtn").addEventListener("click", () => {
-      regime = "new";
-      document.getElementById("newRegimeBtn").classList.add("bg-emerald-600","text-white");
-      document.getElementById("oldRegimeBtn").classList.remove("bg-emerald-600","text-white");
-      document.getElementById("deductionBlock").style.display = "none";
-      showToast("New Regime selected");
-      calculateTax();
-    });
+  const hraExempt=calcHRA(basic,da,hraReceived,rentPaid,metro);
 
-    updateSliderFill(document.getElementById("incomeSlider"));
-    calculateTax();
+  // Total
+  const totalIncome=gross+other+interest+rentInc;
+  const totalDeductions=ded80C+dedNPS+ded80D+ded80G+ded80E+ded80TTA+loanInt+hraExempt;
+  const taxable=Math.max(totalIncome-totalDeductions,0);
+  const tax=calcTax(taxable);
+  const rate=totalIncome>0?((tax/totalIncome)*100).toFixed(2)+'%':'0%';
 
-    // Load header/sidebar/footer
-    Promise.all([
-      fetch("header.html").then(r => r.text()).then(h => document.getElementById("site-header").innerHTML = h),
-      fetch("sidebar.html").then(r => r.text()).then(h => document.getElementById("site-sidebar").innerHTML = h),
-      fetch("footer.html").then(r => r.text()).then(h => document.getElementById("site-footer").innerHTML = h)
-    ]).then(() => {
-      const sidebar = document.getElementById("sidebar"), overlay = document.getElementById("overlay"),
-            menuBtn = document.getElementById("menuBtn"), closeSidebar = document.getElementById("closeSidebar");
-      const openSidebar = () => { sidebar?.classList.remove("-translate-x-full"); overlay?.classList.remove("hidden"); };
-      const closeSidebarFunc = () => { sidebar?.classList.add("-translate-x-full"); overlay?.classList.add("hidden"); };
-      menuBtn?.addEventListener("click", openSidebar);
-      closeSidebar?.addEventListener("click", closeSidebarFunc);
-      overlay?.addEventListener("click", closeSidebarFunc);
-    });
-  </script>
+  // Update UI
+  document.getElementById('resGross').textContent=formatINR(totalIncome);
+  document.getElementById('resDeduction').textContent=formatINR(totalDeductions);
+  document.getElementById('resTaxable').textContent=formatINR(taxable);
+  document.getElementById('resHRA').textContent=formatINR(hraExempt);
+  document.getElementById('resTax').textContent=formatINR(tax);
+  document.getElementById('resRate').textContent=rate;
+  document.getElementById('result').classList.remove('hidden');
+});
+</script>
+
 </body>
 </html>
