@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Income Tax Calculator - Paisa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #f9fafb;
+      margin: 0;
+      padding-top: 4rem;
+      font-family: system-ui, sans-serif;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 5px;
+      outline: none;
+      background: linear-gradient(to right, #10B981 0%, #10B981 0%, #e5e7eb 0%, #e5e7eb 100%);
+      transition: background 0.2s ease;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #10B981; border: 2px solid white; cursor: pointer;
+      box-shadow: 0 0 4px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <div id="site-header"></div>
+
+  <!-- Sidebar -->
+  <div id="site-sidebar"></div>
+
+  <!-- Overlay -->
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
+
+  <main class="max-w-2xl mx-auto bg-white rounded-2xl shadow-md p-6 mt-10">
+    <div class="flex items-center mb-6 justify-center">
+      <div class="w-10 h-10 rounded-md bg-emerald-500 flex items-center justify-center shadow-sm">
+        <span class="text-white text-xl font-bold">₹</span>
+      </div>
+      <div class="ml-3">
+        <h1 class="text-2xl font-bold text-emerald-600 tracking-tight">Income Tax Calculator</h1>
+        <p class="text-sm text-gray-500">FY 2025–26 • Compare Old vs New Regime</p>
+      </div>
+    </div>
+
+    <!-- Inputs -->
+    <div class="space-y-8">
+      <div>
+        <label class="text-sm font-medium text-gray-700">Annual Income (₹)</label>
+        <input id="income" type="number" min="0" max="100000000" step="1000" value="1200000"
+          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 font-semibold text-gray-800">
+        <input id="incomeSlider" type="range" min="0" max="10000000" step="1000" value="1200000" class="mt-3 slider">
+      </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-700">Age Group</label>
+        <select id="ageGroup" class="block w-full bg-green-50 rounded px-3 py-2 mt-1 font-semibold text-gray-800">
+          <option value="below60">Below 60 years</option>
+          <option value="60to80">60–80 years (Senior Citizen)</option>
+          <option value="above80">Above 80 years (Super Senior)</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-700">Tax Regime</label>
+        <div class="flex gap-4 mt-2">
+          <button id="oldRegimeBtn" class="flex-1 py-2 rounded-lg border border-emerald-600 text-emerald-700 font-semibold hover:bg-emerald-50">Old Regime</button>
+          <button id="newRegimeBtn" class="flex-1 py-2 rounded-lg bg-emerald-600 text-white font-semibold hover:bg-emerald-700">New Regime</button>
+        </div>
+      </div>
+
+      <div id="deductionBlock">
+        <label class="text-sm font-medium text-gray-700">Deductions (₹)</label>
+        <input id="deductions" type="number" min="0" max="1000000" step="1000" value="150000"
+          class="block w-full bg-green-50 rounded px-3 py-2 mt-1 font-semibold text-gray-800">
+        <p class="text-xs text-gray-500 mt-1">Applicable under Old Regime only (e.g., 80C, 80D, etc.)</p>
+      </div>
+    </div>
+
+    <!-- Output -->
+    <div class="mt-10 text-center">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4">Tax Summary</h3>
+
+      <div class="flex flex-col items-center justify-center pie-wrapper mb-4">
+        <svg id="pieChart" viewBox="0 0 36 36" width="200" height="200" class="mx-auto">
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#E5E7EB" stroke-width="6"></circle>
+          <circle id="taxFreeArc" cx="18" cy="18" r="15.915" fill="none" stroke="#A7F3D0" stroke-width="6" stroke-dasharray="0 100" stroke-linecap="round"></circle>
+          <circle id="taxedArc" cx="18" cy="18" r="15.915" fill="none" stroke="#047857" stroke-width="6" stroke-dasharray="0 100" stroke-linecap="round"></circle>
+        </svg>
+      </div>
+
+      <div class="space-y-2 text-sm text-gray-700">
+        <p><span class="inline-block w-3 h-3 bg-emerald-200 rounded-full mr-2"></span>Tax-Free Income: <span id="taxFreeText">₹0</span></p>
+        <p><span class="inline-block w-3 h-3 bg-emerald-700 rounded-full mr-2"></span>Taxed Portion: <span id="taxedText">₹0</span></p>
+      </div>
+
+      <div class="mt-4 text-gray-800 font-semibold space-y-1">
+        <p>Taxable Income: <span id="taxableIncome">₹0</span></p>
+        <p>Total Tax Payable: <span id="taxValue" class="text-emerald-700 text-lg">₹0</span></p>
+        <p>Effective Tax Rate: <span id="taxRate">0%</span></p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <div id="site-footer"></div>
+
+  <script>
+    let regime = "new";
+
+    function formatINR(num) {
+      return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(num);
+    }
+
+    function updateSliderFill(slider) {
+      const min = slider.min || 0, max = slider.max || 100, value = slider.value;
+      const pct = ((value - min) * 100) / (max - min);
+      slider.style.background = `linear-gradient(to right, #10B981 0%, #10B981 ${pct}%, #e5e7eb ${pct}%, #e5e7eb 100%)`;
+    }
+
+    function showToast(msg) {
+      const old = document.getElementById("toast");
+      if (old) old.remove();
+      const t = document.createElement("div");
+      t.id = "toast";
+      t.textContent = msg;
+      t.className = "fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-fade";
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2000);
+    }
+
+    function calculateTax() {
+      const income = parseFloat(document.getElementById("income").value) || 0;
+      const age = document.getElementById("ageGroup").value;
+      const deductions = regime === "old" ? (parseFloat(document.getElementById("deductions").value) || 0) : 0;
+
+      let taxable = Math.max(income - deductions, 0);
+      let tax = 0;
+
+      // slabs
+      if (regime === "old") {
+        let slabs;
+        if (age === "below60") slabs = [250000, 500000, 1000000];
+        else if (age === "60to80") slabs = [300000, 500000, 1000000];
+        else slabs = [500000, 1000000];
+        if (taxable <= slabs[0]) tax = 0;
+        else if (taxable <= slabs[1]) tax = 0.05 * (taxable - slabs[0]);
+        else if (taxable <= slabs[2]) tax = 12500 + 0.2 * (taxable - slabs[1]);
+        else tax = 112500 + 0.3 * (taxable - slabs[2]);
+      } else {
+        // New Regime FY25-26
+        const slabs = [300000, 600000, 900000, 1200000, 1500000];
+        if (taxable <= slabs[0]) tax = 0;
+        else if (taxable <= slabs[1]) tax = 0.05 * (taxable - slabs[0]);
+        else if (taxable <= slabs[2]) tax = 15000 + 0.1 * (taxable - slabs[1]);
+        else if (taxable <= slabs[3]) tax = 45000 + 0.15 * (taxable - slabs[2]);
+        else if (taxable <= slabs[4]) tax = 90000 + 0.2 * (taxable - slabs[3]);
+        else tax = 150000 + 0.3 * (taxable - slabs[4]);
+      }
+
+      // rebate under 87A
+      if (regime === "new" && taxable <= 1200000 && tax > 0) tax = 0;
+      if (regime === "old" && taxable <= 500000 && tax > 0) tax = 0;
+
+      const rate = income > 0 ? ((tax / income) * 100).toFixed(2) : 0;
+      const taxFree = income - taxable;
+      const taxed = taxable;
+
+      document.getElementById("taxableIncome").textContent = formatINR(taxable);
+      document.getElementById("taxValue").textContent = formatINR(tax);
+      document.getElementById("taxRate").textContent = rate + "%";
+      document.getElementById("taxFreeText").textContent = formatINR(taxFree);
+      document.getElementById("taxedText").textContent = formatINR(taxed);
+
+      const total = income || 1;
+      const freePct = (taxFree / total) * 100, taxedPct = (taxed / total) * 100;
+      document.getElementById("taxFreeArc").setAttribute("stroke-dasharray", freePct + " " + (100 - freePct));
+      document.getElementById("taxedArc").setAttribute("stroke-dasharray", taxedPct + " " + (100 - taxedPct));
+      document.getElementById("taxedArc").setAttribute("stroke-dashoffset", -freePct);
+    }
+
+    document.getElementById("income").addEventListener("input", e => {
+      const v = parseFloat(e.target.value);
+      document.getElementById("incomeSlider").value = v;
+      updateSliderFill(document.getElementById("incomeSlider"));
+      calculateTax();
+    });
+
+    document.getElementById("incomeSlider").addEventListener("input", e => {
+      document.getElementById("income").value = e.target.value;
+      updateSliderFill(e.target);
+      calculateTax();
+    });
+
+    document.getElementById("ageGroup").addEventListener("change", calculateTax);
+    document.getElementById("deductions").addEventListener("input", calculateTax);
+
+    document.getElementById("oldRegimeBtn").addEventListener("click", () => {
+      regime = "old";
+      document.getElementById("oldRegimeBtn").classList.add("bg-emerald-600","text-white");
+      document.getElementById("newRegimeBtn").classList.remove("bg-emerald-600","text-white");
+      document.getElementById("deductionBlock").style.display = "block";
+      showToast("Old Regime selected");
+      calculateTax();
+    });
+
+    document.getElementById("newRegimeBtn").addEventListener("click", () => {
+      regime = "new";
+      document.getElementById("newRegimeBtn").classList.add("bg-emerald-600","text-white");
+      document.getElementById("oldRegimeBtn").classList.remove("bg-emerald-600","text-white");
+      document.getElementById("deductionBlock").style.display = "none";
+      showToast("New Regime selected");
+      calculateTax();
+    });
+
+    updateSliderFill(document.getElementById("incomeSlider"));
+    calculateTax();
+
+    // Load header/sidebar/footer
+    Promise.all([
+      fetch("header.html").then(r => r.text()).then(h => document.getElementById("site-header").innerHTML = h),
+      fetch("sidebar.html").then(r => r.text()).then(h => document.getElementById("site-sidebar").innerHTML = h),
+      fetch("footer.html").then(r => r.text()).then(h => document.getElementById("site-footer").innerHTML = h)
+    ]).then(() => {
+      const sidebar = document.getElementById("sidebar"), overlay = document.getElementById("overlay"),
+            menuBtn = document.getElementById("menuBtn"), closeSidebar = document.getElementById("closeSidebar");
+      const openSidebar = () => { sidebar?.classList.remove("-translate-x-full"); overlay?.classList.remove("hidden"); };
+      const closeSidebarFunc = () => { sidebar?.classList.add("-translate-x-full"); overlay?.classList.add("hidden"); };
+      menuBtn?.addEventListener("click", openSidebar);
+      closeSidebar?.addEventListener("click", closeSidebarFunc);
+      overlay?.addEventListener("click", closeSidebarFunc);
+    });
+  </script>
+</body>
+</html>
