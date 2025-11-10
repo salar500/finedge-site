@@ -17,8 +17,12 @@
     }
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 20px; height: 20px; border-radius: 50%;
-      background: #10B981; border: 2px solid white; cursor: pointer;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #10B981;
+      border: 2px solid white;
+      cursor: pointer;
       box-shadow: 0 0 4px rgba(0,0,0,0.3);
     }
     body {
@@ -33,13 +37,8 @@
 </head>
 
 <body>
-  <!-- Header -->
   <div id="site-header"></div>
-
-  <!-- Sidebar -->
   <div id="site-sidebar"></div>
-
-  <!-- Overlay -->
   <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
 
   <main class="max-w-2xl mx-auto bg-white rounded-2xl shadow-md p-6 mt-10">
@@ -52,7 +51,6 @@
       </div>
     </div>
 
-    <!-- Inputs -->
     <div class="space-y-8">
       <div>
         <label class="text-sm font-medium text-gray-700">Property Value (₹)</label>
@@ -96,10 +94,8 @@
       </div>
     </div>
 
-    <!-- Output -->
     <div class="mt-10 text-center">
       <h3 class="text-lg font-semibold text-gray-700 mb-4">Loan Summary</h3>
-
       <div class="flex flex-col items-center justify-center pie-wrapper">
         <svg id="pieChart" viewBox="0 0 36 36">
           <circle cx="18" cy="18" r="15.915" fill="none" stroke="#E5E7EB" stroke-width="6"></circle>
@@ -107,27 +103,23 @@
           <circle id="interestArc" cx="18" cy="18" r="15.915" fill="none" stroke="#047857" stroke-width="6" stroke-dasharray="0 100" stroke-linecap="round"></circle>
         </svg>
       </div>
-
       <div class="mt-4 space-y-2 text-sm text-gray-700">
         <p><span class="inline-block w-3 h-3 bg-emerald-200 rounded-full mr-2"></span>Principal: <span id="principalText">₹0</span></p>
         <p><span class="inline-block w-3 h-3 bg-emerald-700 rounded-full mr-2"></span>Interest: <span id="interestText">₹0</span></p>
       </div>
-
       <p class="font-semibold text-gray-900 text-lg mt-4">Monthly EMI: <span id="emiValue">₹0</span></p>
     </div>
   </main>
 
-  <!-- Footer -->
   <div id="site-footer"></div>
+
   <script>
   let manualLoanEdit = false;
   let toastTimeout = null;
 
   function showToast(message, type = "warning") {
-    // Remove existing toast if visible
     const oldToast = document.getElementById("toastMessage");
     if (oldToast) oldToast.remove();
-
     const toast = document.createElement("div");
     toast.id = "toastMessage";
     toast.innerText = message;
@@ -135,26 +127,19 @@
       type === "warning" ? "bg-red-600" : "bg-emerald-600"
     }`;
     document.body.appendChild(toast);
-
     clearTimeout(toastTimeout);
     toastTimeout = setTimeout(() => {
       toast.style.opacity = "0";
-      setTimeout(() => toast.remove(), 500);
+      setTimeout(() => toast.remove(), 400);
     }, 2000);
   }
 
   function formatINR(v) {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0
-    }).format(v);
+    return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v);
   }
 
   function updateSliderFill(slider) {
-    const min = slider.min || 0,
-      max = slider.max || 100,
-      value = slider.value;
+    const min = slider.min || 0, max = slider.max || 100, value = slider.value;
     const pct = ((value - min) * 100) / (max - min);
     slider.style.background = `linear-gradient(to right,#10B981 0%,#10B981 ${pct}%,#e5e7eb ${pct}%,#e5e7eb 100%)`;
   }
@@ -163,28 +148,22 @@
     const P = parseFloat(document.getElementById('loanAmount').value) || 0;
     const rA = parseFloat(document.getElementById('rate').value) || 0;
     const yrs = parseFloat(document.getElementById('years').value) || 0;
-    const r = rA / 12 / 100,
-      n = yrs * 12;
-    let emi = 0,
-      total = 0,
-      intst = 0;
-
+    const r = rA / 12 / 100, n = yrs * 12;
+    let emi = 0, total = 0, intst = 0;
     if (P > 0 && r > 0 && n > 0) {
       const x = Math.pow(1 + r, n);
       emi = (P * r * x) / (x - 1);
       total = emi * n;
       intst = total - P;
     }
-
     document.getElementById('emiValue').innerText = formatINR(emi.toFixed(0));
     document.getElementById('principalText').innerText = formatINR(P.toFixed(0));
     document.getElementById('interestText').innerText = formatINR(intst.toFixed(0));
 
-    const totalSum = P + intst,
-      pPct = (P / totalSum) * 100,
-      iPct = (intst / totalSum) * 100;
-    document.getElementById('principalArc').setAttribute('stroke-dasharray', pPct + ' ' + (100 - pPct));
-    document.getElementById('interestArc').setAttribute('stroke-dasharray', iPct + ' ' + (100 - iPct));
+    const totalSum = P + intst || 1;
+    const pPct = (P / totalSum) * 100, iPct = (intst / totalSum) * 100;
+    document.getElementById('principalArc').setAttribute('stroke-dasharray', `${pPct} ${100 - pPct}`);
+    document.getElementById('interestArc').setAttribute('stroke-dasharray', `${iPct} ${100 - iPct}`);
     document.getElementById('interestArc').setAttribute('stroke-dashoffset', -pPct);
   }
 
@@ -192,11 +171,12 @@
     const property = parseFloat(document.getElementById('propertyValue').value) || 0;
     const downInput = document.getElementById('downPayment');
     const loanInput = document.getElementById('loanAmount');
+    const downBar = document.getElementById('downBar');
+    const loanBar = document.getElementById('loanBar');
 
     let down = parseFloat(downInput.value) || 0;
     let loan = parseFloat(loanInput.value) || 0;
 
-    // Limit values to property value
     if (down > property) {
       down = property;
       downInput.value = property;
@@ -216,46 +196,31 @@
       downInput.value = down.toFixed(0);
     }
 
+    const downPct = property > 0 ? (down / property) * 100 : 0;
+    const loanPct = property > 0 ? (loan / property) * 100 : 0;
+    downBar.style.width = `${downPct}%`;
+    loanBar.style.width = `${loanPct}%`;
+
     downInput.max = property;
     loanInput.max = property;
 
     calculateHomeLoan();
   }
 
-  // Event Listeners
-  document.getElementById('propertyValue').addEventListener('input', () => {
-    manualLoanEdit = false;
-    syncLoanAmount();
-  });
-  document.getElementById('downPayment').addEventListener('input', () => {
-    manualLoanEdit = false;
-    syncLoanAmount();
-  });
-  document.getElementById('loanAmount').addEventListener('input', () => {
-    manualLoanEdit = true;
-    syncLoanAmount();
-  });
+  document.getElementById('propertyValue').addEventListener('input', () => { manualLoanEdit = false; syncLoanAmount(); });
+  document.getElementById('downPayment').addEventListener('input', () => { manualLoanEdit = false; syncLoanAmount(); });
+  document.getElementById('loanAmount').addEventListener('input', () => { manualLoanEdit = true; syncLoanAmount(); });
 
   ['rate', 'years'].forEach(id => {
-    const input = document.getElementById(id),
-      slider = document.getElementById(id + 'Slider');
-    const updateAll = () => {
-      slider.value = input.value;
-      updateSliderFill(slider);
-      calculateHomeLoan();
-    };
+    const input = document.getElementById(id), slider = document.getElementById(id + 'Slider');
+    const updateAll = () => { slider.value = input.value; updateSliderFill(slider); calculateHomeLoan(); };
     input.addEventListener('input', updateAll);
-    slider.addEventListener('input', () => {
-      input.value = slider.value;
-      updateSliderFill(slider);
-      calculateHomeLoan();
-    });
+    slider.addEventListener('input', () => { input.value = slider.value; updateSliderFill(slider); calculateHomeLoan(); });
     updateSliderFill(slider);
   });
 
   syncLoanAmount();
 
-  // Load Header, Sidebar, Footer
   Promise.all([
     fetch("header.html").then(r => r.text()).then(h => (document.getElementById("site-header").innerHTML = h)),
     fetch("sidebar.html").then(r => r.text()).then(h => (document.getElementById("site-sidebar").innerHTML = h)),
@@ -266,14 +231,8 @@
     const menuBtn = document.getElementById("menuBtn");
     const closeSidebar = document.getElementById("closeSidebar");
 
-    function openSidebar() {
-      sidebar?.classList.remove("-translate-x-full");
-      overlay?.classList.remove("hidden");
-    }
-    function closeSidebarFunc() {
-      sidebar?.classList.add("-translate-x-full");
-      overlay?.classList.add("hidden");
-    }
+    function openSidebar() { sidebar?.classList.remove("-translate-x-full"); overlay?.classList.remove("hidden"); }
+    function closeSidebarFunc() { sidebar?.classList.add("-translate-x-full"); overlay?.classList.add("hidden"); }
 
     menuBtn?.addEventListener("click", openSidebar);
     closeSidebar?.addEventListener("click", closeSidebarFunc);
