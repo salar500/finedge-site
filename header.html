@@ -1,12 +1,21 @@
 <!-- header.html -->
 <nav class="fixed top-0 left-0 right-0 bg-emerald-600 text-white flex items-center justify-between px-4 py-3 shadow-md z-50">
-  <div class="flex items-center gap-2">
+  <div class="flex items-center gap-3">
     <!-- Menu Button -->
     <button id="menuBtn" class="p-2 rounded hover:bg-emerald-700 focus:outline-none">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
       </svg>
     </button>
+
+    <!-- 🏠 Home Button -->
+    <a href="index.html" class="flex items-center gap-1 px-2 py-1 rounded hover:bg-emerald-700 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 9.75L12 4l9 5.75V20a1 1 0 01-1 1h-5.5a1 1 0 01-1-1v-4H10v4a1 1 0 01-1 1H3.75a.75.75 0 01-.75-.75V9.75z" />
+      </svg>
+      <span class="text-sm font-medium">Home</span>
+    </a>
 
     <!-- Logo / Title -->
     <div class="flex items-center gap-1 select-none">
@@ -17,7 +26,7 @@
 </nav>
 
 <script>
-  // Make sure this runs safely even when included via fetch()
+  // Keep existing functionality (works across all pages)
   window.addEventListener("DOMContentLoaded", () => {
     const menuBtn = document.getElementById("menuBtn");
     const sidebar = document.getElementById("sidebar");
