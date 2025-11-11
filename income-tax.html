@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paisa Income Tax Calculator - Old vs New Regime</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: system-ui, sans-serif; background: #f9fafb; padding-top: 4rem; }
+  .error { color: #dc2626; font-size: 0.8rem; }
+  input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  .active-btn { background-color: #10B981; color: white; border-color: #10B981; }
+</style>
+</head>
+<body>
+
+<main class="max-w-5xl mx-auto bg-white p-6 rounded-2xl shadow-md">
+  <h1 class="text-2xl font-bold text-emerald-700 mb-6">Paisa Income Tax Calculator</h1>
+
+  <!-- Assessment Year -->
+  <div class="mb-4">
+    <label class="block font-medium text-gray-700">Assessment Year</label>
+    <select id="assessmentYear" class="mt-1 block w-full rounded px-3 py-2 border bg-green-50">
+      <option value="2025-26" selected>2025–2026</option>
+      <option value="2024-25">2024–2025</option>
+      <option value="2023-24">2023–2024</option>
+    </select>
+  </div>
+
+  <!-- Age Category -->
+  <div class="mb-4">
+    <label class="block font-medium text-gray-700">Age Category</label>
+    <select id="ageGroup" class="mt-1 block w-full rounded px-3 py-2 border bg-green-50">
+      <option value="below60" selected>Below 60 years</option>
+      <option value="60to80">60–80 years (Senior)</option>
+      <option value="above80">Above 80 years (Super Senior)</option>
+    </select>
+  </div>
+
+  <!-- Income Section -->
+  <h2 class="font-semibold text-gray-700 mt-6 mb-2">Income Section</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label>Gross Salary (₹)</label>
+      <input type="number" id="grossSalary" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>Other Income (₹)</label>
+      <input type="number" id="otherIncome" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>Interest Income (₹)</label>
+      <input type="number" id="interestIncome" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>Rental Income (₹)</label>
+      <input type="number" id="rentalIncome" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>Interest Paid on Home Loan (₹)</label>
+      <input type="number" id="homeLoanInterest" value="0" min="0" max="200000" class="block w-full px-3 py-2 rounded bg-green-50">
+      <p class="text-xs text-gray-500">Max ₹2,00,000 deduction</p>
+    </div>
+  </div>
+
+  <!-- Deductions Section -->
+  <h2 class="font-semibold text-gray-700 mt-6 mb-2">Deductions</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label>80C Investments (₹)</label>
+      <input type="number" id="ded80C" value="0" min="0" max="150000" class="block w-full px-3 py-2 rounded bg-green-50">
+      <p class="text-xs text-gray-500">Max ₹1,50,000</p>
+    </div>
+    <div>
+      <label>NPS Contribution 80CCD(1B) (₹)</label>
+      <input type="number" id="dedNPS" value="0" min="0" max="50000" class="block w-full px-3 py-2 rounded bg-green-50">
+      <p class="text-xs text-gray-500">Max ₹50,000</p>
+    </div>
+    <div>
+      <label>Medical Insurance 80D (₹)</label>
+      <input type="number" id="ded80D" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>Donations 80G (₹)</label>
+      <input type="number" id="ded80G" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>Education Loan Interest 80E (₹)</label>
+      <input type="number" id="ded80E" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>Savings Account Interest 80TTA/TTB (₹)</label>
+      <input type="number" id="ded80TTA" value="0" min="0" max="10000" class="block w-full px-3 py-2 rounded bg-green-50">
+      <p class="text-xs text-gray-500">Max ₹10,000</p>
+    </div>
+  </div>
+
+  <!-- HRA Section -->
+  <h2 class="font-semibold text-gray-700 mt-6 mb-2">HRA Exemption</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label>Basic Salary (₹)</label>
+      <input type="number" id="basicSalary" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>DA (₹)</label>
+      <input type="number" id="daSalary" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>HRA Received (₹)</label>
+      <input type="number" id="hraReceived" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>Total Rent Paid (₹)</label>
+      <input type="number" id="rentPaid" value="0" min="0" class="block w-full px-3 py-2 rounded bg-green-50">
+    </div>
+    <div>
+      <label>Metro City?</label>
+      <select id="metroCity" class="mt-1 block w-full rounded px-3 py-2 border bg-green-50">
+        <option value="yes">Yes</option>
+        <option value="no" selected>No</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Old/New Regime Selector -->
+  <h2 class="font-semibold text-gray-700 mt-6 mb-2">Tax Regime</h2>
+  <div class="flex gap-4 mb-6">
+    <button id="oldRegimeBtn" class="flex-1 py-2 rounded border border-emerald-600 text-emerald-700 font-semibold hover:bg-emerald-50">Old Regime</button>
+    <button id="newRegimeBtn" class="flex-1 py-2 rounded bg-emerald-600 text-white font-semibold hover:bg-emerald-700">New Regime</button>
+  </div>
+
+  <!-- Action -->
+  <button id="calculateBtn" class="w-full py-2 bg-emerald-600 text-white rounded font-semibold hover:bg-emerald-700">Calculate Tax</button>
+
+  <!-- Results -->
+  <div id="result" class="mt-6 bg-green-50 p-4 rounded hidden">
+    <h3 class="font-semibold text-gray-700">Tax Summary</h3>
+    <p>Gross Income: ₹<span id="resGross">0</span></p>
+    <p>Total Deductions: ₹<span id="resDeduction">0</span></p>
+    <p>HRA Exemption: ₹<span id="resHRA">0</span></p>
+    <p>Taxable Income: ₹<span id="resTaxable">0</span></p>
+    <p>Estimated Tax Payable: ₹<span id="resTax">0</span></p>
+    <p>Effective Tax Rate: <span id="resRate">0%</span></p>
+  </div>
+</main>
+
+<script>
+let regime = 'new';
+const maxValues = { '80C':150000, 'NPS':50000, '80TTA':10000, 'HomeLoan':200000 };
+
+// Regime buttons
+document.getElementById('oldRegimeBtn').addEventListener('click',()=>{ regime='old'; toggleRegime(); });
+document.getElementById('newRegimeBtn').addEventListener('click',()=>{ regime='new'; toggleRegime(); });
+
+function toggleRegime(){
+  const oldBtn = document.getElementById('oldRegimeBtn');
+  const newBtn = document.getElementById('newRegimeBtn');
+  if(regime==='old'){
+    oldBtn.classList.add('active-btn');
+    newBtn.classList.remove('active-btn');
+  }else{
+    newBtn.classList.add('active-btn');
+    oldBtn.classList.remove('active-btn');
+  }
+}
+
+// Format INR
+function formatINR(num){ return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(num); }
+
+// Input fetch and validation
+function getInputValue(id,cap=null){
+  const el=document.getElementById(id);
+  let val=parseFloat(el.value)||0;
+  if(val<0){ alert('Negative value not allowed'); val=0; el.value=0; }
+  if(cap!==null && val>cap){ val=cap; el.value=cap; }
+  return val;
+}
+
+// HRA Calculation
+function calcHRA(basic,da,hra,rent,metro){
+  const perc=metro==='yes'?0.5:0.4;
+  return Math.max(Math.min(hra, rent-0.1*basic, perc*(basic+da)),0);
+}
+
+// Tax Calculation (accurate slabs FY 2025-26)
+function calcTax(taxable){
+  let tax=0;
+  if(regime==='old'){
+    const slabs=[250000,500000,1000000];
+    if(taxable<=slabs[0]) tax=0;
+    else if(taxable<=slabs[1]) tax=0.05*(taxable-slabs[0]);
+    else if(taxable<=slabs[2]) tax=12500+0.2*(taxable-slabs[1]);
+    else tax=112500+0.3*(taxable-slabs[2]);
+    if(taxable<=500000) tax=0;
+  }else{
+    const slabs=[300000,600000,900000,1200000,1500000];
+    if(taxable<=slabs[0]) tax=0;
+    else if(taxable<=slabs[1]) tax=0.05*(taxable-slabs[0]);
+    else if(taxable<=slabs[2]) tax=15000+0.1*(taxable-slabs[1]);
+    else if(taxable<=slabs[3]) tax=45000+0.15*(taxable-slabs[2]);
+    else if(taxable<=slabs[4]) tax=90000+0.2*(taxable-slabs[3]);
+    else tax=150000+0.3*(taxable-slabs[4]);
+    if(taxable<=1200000) tax=0;
+  }
+  return tax;
+}
+
+document.getElementById('calculateBtn').addEventListener('click',()=>{
+  const gross=getInputValue('grossSalary');
+  const other=getInputValue('otherIncome');
+  const interest=getInputValue('interestIncome');
+  const rentInc=getInputValue('rentalIncome');
+  const loanInt=getInputValue('homeLoanInterest',maxValues.HomeLoan);
+
+  const ded80C=getInputValue('ded80C',maxValues['80C']);
+  const dedNPS=getInputValue('dedNPS',maxValues['NPS']);
+  const ded80D=getInputValue('ded80D');
+  const ded80G=getInputValue('ded80G');
+  const ded80E=getInputValue('ded80E');
+  const ded80TTA=getInputValue('ded80TTA',maxValues['80TTA']);
+
+  const basic=getInputValue('basicSalary');
+  const da=getInputValue('daSalary');
+  const hraReceived=getInputValue('hraReceived');
+  const rentPaid=getInputValue('rentPaid');
+  const metro=document.getElementById('metroCity').value;
+
+  const hraExempt=calcHRA(basic,da,hraReceived,rentPaid,metro);
+
+  const totalIncome=gross+other+interest+rentInc;
+  const totalDeductions=ded80C+dedNPS+ded80D+ded80G+ded80E+ded80TTA+loanInt+hraExempt;
+  const taxable=Math.max(totalIncome-totalDeductions,0);
+  const tax=calcTax(taxable);
+  const rate=totalIncome>0?((tax/totalIncome)*100).toFixed(2)+'%':'0%';
+
+  document.getElementById('resGross').textContent=formatINR(totalIncome);
+  document.getElementById('resDeduction').textContent=formatINR(totalDeductions);
+  document.getElementById('resTaxable').textContent=formatINR(taxable);
+  document.getElementById('resHRA').textContent=formatINR(hraExempt);
+  document.getElementById('resTax').textContent=formatINR(tax);
+  document.getElementById('resRate').textContent=rate;
+  document.getElementById('result').classList.remove('hidden');
+});
+</script>
+
+</body>
+</html>
