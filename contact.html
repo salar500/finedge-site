@@ -68,12 +68,36 @@ Thanks,
   <div id="site-footer"></div>
 
   <script>
-    // load header/sidebar/footer (same as other pages)
+    // Load header, sidebar, and footer
     Promise.all([
-      fetch('header.html').then(r=>r.text()).then(h=>document.getElementById('site-header').innerHTML=h),
-      fetch('sidebar.html').then(r=>r.text()).then(h=>document.getElementById('site-sidebar').innerHTML=h),
-      fetch('footer.html').then(r=>r.text()).then(h=>document.getElementById('site-footer').innerHTML=h)
-    ]).catch(err=>console.warn('Header/Sidebar/Footer load failed', err));
+      fetch('header.html').then(r => r.text()).then(h => document.getElementById('site-header').innerHTML = h),
+      fetch('sidebar.html').then(r => r.text()).then(h => document.getElementById('site-sidebar').innerHTML = h),
+      fetch('footer.html').then(r => r.text()).then(h => document.getElementById('site-footer').innerHTML = h)
+    ])
+    .then(() => {
+      // ✅ Sidebar logic (same as other pages)
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      const menuBtn = document.getElementById('menuBtn');
+      const closeSidebar = document.getElementById('closeSidebar');
+
+      function openSidebar() {
+        if (!sidebar || !overlay) return;
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+      }
+
+      function closeSidebarFunc() {
+        if (!sidebar || !overlay) return;
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+      }
+
+      menuBtn?.addEventListener('click', openSidebar);
+      closeSidebar?.addEventListener('click', closeSidebarFunc);
+      overlay?.addEventListener('click', closeSidebarFunc);
+    })
+    .catch(err => console.warn('Header/Sidebar/Footer load failed', err));
   </script>
 </body>
 </html>
